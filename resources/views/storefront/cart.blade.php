@@ -1,0 +1,63 @@
+@extends('layouts.storefront', ['title' => 'Cart'])
+
+@section('content')
+    <section class="mx-auto max-w-7xl px-4 py-8">
+        <x-section-title title="Cart" subtitle="Update quantities, remove items, and review totals before checkout." />
+        <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
+            <div class="space-y-4">
+                @forelse ($cart->items as $item)
+                    <div class="grid gap-4 rounded-lg border border-[#eadcc3] bg-white p-4 shadow-sm md:grid-cols-[96px_1fr_auto] md:items-center">
+                        <img src="{{ $item->product->primaryImage() }}" alt="{{ $item->product->name }}" class="aspect-square rounded-lg object-cover">
+                        <div>
+                            <h2 class="font-serif text-xl font-bold">{{ $item->product->name }}</h2>
+                            <p class="text-sm text-[#6f5a50]">{{ $item->variant?->color }} · ৳{{ number_format($item->product->finalPrice()) }}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <form action="{{ route('cart.update', $item) }}" method="POST" class="flex gap-2">
+                                @csrf @method('PATCH')
+                                <input name="quantity" value="{{ $item->quantity }}" type="number" min="1" class="w-20 rounded-lg border border-[#dfcda9] px-3 py-2">
+                                <button class="rounded-lg border border-[#7a1f55] px-3 py-2 text-sm font-semibold text-[#7a1f55]">Update</button>
+                            </form>
+                            <form action="{{ route('cart.destroy', $item) }}" method="POST">
+                                @csrf @method('DELETE')
+                                <button class="rounded-lg bg-[#f8e8e8] px-3 py-2 text-sm font-semibold text-red-700">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="rounded-lg border border-[#eadcc3] bg-white p-8 text-center">Your cart is empty.</div>
+                @endforelse
+            </div>
+            <aside class="h-fit rounded-lg border border-[#eadcc3] bg-white p-5 shadow-sm">
+                <h2 class="font-serif text-2xl font-bold">Order Summary</h2>
+                <div class="mt-5 rounded-lg bg-[#fffaf0] p-3">
+                    @if ($coupon)
+                        <div class="flex items-center justify-between gap-3 text-sm">
+                            <span><strong>{{ $coupon->code }}</strong> applied</span>
+                            <form action="{{ route('cart.coupon.remove') }}" method="POST">
+                                @csrf @method('DELETE')
+                                <button class="font-semibold text-red-700">Remove</button>
+                            </form>
+                        </div>
+                    @else
+                        <form action="{{ route('cart.coupon.apply') }}" method="POST" class="flex gap-2">
+                            @csrf
+                            <input name="coupon_code" value="{{ old('coupon_code') }}" class="min-w-0 flex-1 rounded-lg border border-[#dfcda9] px-3 py-2 text-sm" placeholder="Coupon code">
+                            <button class="rounded-lg bg-[#7a1f55] px-3 py-2 text-sm font-semibold text-white">Apply</button>
+                        </form>
+                    @endif
+                    @error('coupon_code')
+                        <p class="mt-2 text-sm text-red-700">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="mt-5 grid gap-3 text-sm">
+                    <div class="flex justify-between"><span>Subtotal</span><span>৳{{ number_format($subtotal) }}</span></div>
+                    <div class="flex justify-between"><span>Delivery charge</span><span>৳{{ number_format($deliveryCharge) }}</span></div>
+                    <div class="flex justify-between"><span>Coupon discount</span><span>-৳{{ number_format($discountAmount) }}</span></div>
+                    <div class="flex justify-between border-t border-[#eadcc3] pt-3 text-lg font-bold"><span>Total</span><span>৳{{ number_format($total) }}</span></div>
+                </div>
+                <a href="{{ route('checkout.create') }}" class="mt-6 block rounded-lg bg-[#7a1f55] px-4 py-3 text-center font-semibold text-white">Checkout</a>
+            </aside>
+        </div>
+    </section>
+@endsection
