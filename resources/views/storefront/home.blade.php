@@ -64,21 +64,37 @@
         ];
     @endphp
 
-    <section class="mx-auto grid max-w-7xl gap-8 px-4 py-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <div class="py-8">
-            <p class="text-sm font-bold uppercase text-[#c9a24a]">Premium light boutique</p>
-            <h1 class="mt-3 max-w-3xl font-serif text-4xl font-bold leading-tight text-[#2f241f] md:text-6xl">{{ $hero?->headline ?? 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
-            <p class="mt-5 max-w-2xl text-lg text-[#6f5a50]">No model photos needed. Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
-            <div class="mt-8 flex flex-wrap gap-3">
-                <a href="{{ route('products.index', ['category' => 'sharee']) }}" class="rounded-lg bg-[#8a155b] px-6 py-3 font-semibold text-white shadow-lg shadow-[#8a155b]/20 transition hover:bg-[#6f1047]">{{ $hero?->cta_label ?? 'Shop Sharee' }}</a>
-                <a href="{{ route('offers.index') }}" class="rounded-lg border border-[#c9a24a] bg-white px-6 py-3 font-semibold text-[#8a155b] transition hover:border-[#8a155b]">View Offers</a>
-            </div>
-        </div>
-        <div class="relative">
-            <img src="{{ $hero?->image_url ?? 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=1600&q=80' }}" alt="Premium fabric flat-lay" class="aspect-[4/3] w-full rounded-lg border border-[#d8b879] object-cover shadow-2xl shadow-[#7a1f55]/10">
-            <div class="absolute bottom-4 left-4 rounded-lg border border-[#ead8ba] bg-white/90 p-4 shadow-lg backdrop-blur">
-                <p class="text-xs font-bold uppercase tracking-wide text-[#c9a24a]">Featured</p>
-                <p class="font-serif text-xl font-bold">Bridal boutique edit</p>
+    <section class="mx-auto max-w-7xl px-4 py-8">
+        <div class="relative overflow-hidden rounded-lg border border-[#ddc38d] bg-gradient-to-br from-[#fffdf8] via-[#fff8ec] to-[#fffaf4] p-5 shadow-[0_24px_80px_rgba(89,61,48,0.11)]">
+            <x-ui.page-pattern />
+            <x-ui.hero-frame />
+            <x-ui.corner-ornament position="top-left" class="hidden h-20 w-20 opacity-35 md:block" />
+            <x-ui.corner-ornament position="bottom-right" class="hidden h-20 w-20 opacity-35 md:block" />
+
+            <div class="relative z-10 grid gap-8 p-4 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:p-10">
+                <div class="py-8">
+                    <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#b78a34]">Premium light boutique</p>
+                    <h1 class="mt-4 max-w-3xl font-serif text-4xl font-bold leading-[1.08] text-[#321f27] md:text-6xl">{{ $hero?->headline ?? 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
+                    <x-ui.section-divider class="mx-0 mt-5 h-5 w-48 opacity-80" />
+                    <p class="mt-5 max-w-2xl text-lg leading-8 text-[#6f5a50]">No model photos needed. Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <a href="{{ route('products.index', ['category' => 'sharee']) }}" class="rounded-lg bg-[#8a155b] px-6 py-3 font-semibold text-white shadow-lg shadow-[#8a155b]/20 transition hover:bg-[#6f1047]">{{ $hero?->cta_label ?? 'Shop Sharee' }}</a>
+                        <a href="{{ route('offers.index') }}" class="rounded-lg border border-[#c9a24a] bg-white/85 px-6 py-3 font-semibold text-[#8a155b] shadow-sm transition hover:border-[#8a155b] hover:bg-white">View Offers</a>
+                    </div>
+                    <div class="mt-8 grid max-w-lg gap-4 text-sm text-[#6f5a50] sm:grid-cols-3">
+                        <div class="flex items-center gap-2"><span class="text-[#c9a24a]">✧</span>Free delivery over ৳5,000</div>
+                        <div class="flex items-center gap-2"><span class="text-[#c9a24a]">◇</span>Cash on delivery</div>
+                        <div class="flex items-center gap-2"><span class="text-[#c9a24a]">↻</span>Easy return support</div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-10 rounded-full bg-[#c9a24a]/16 blur-3xl"></div>
+                    <img src="{{ $hero?->image_url ?? 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=1600&q=80' }}" alt="Premium fabric flat-lay" class="relative aspect-[4/3] w-full rounded-lg border border-[#ddc38d] object-cover shadow-2xl shadow-[#7a1f55]/10">
+                    <div class="absolute bottom-4 left-4 rounded-lg border border-[#ead8ba] bg-white/90 p-4 shadow-lg backdrop-blur">
+                        <p class="text-xs font-bold uppercase tracking-wide text-[#c9a24a]">Featured</p>
+                        <p class="font-serif text-xl font-bold">Bridal boutique edit</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

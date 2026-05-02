@@ -1,10 +1,14 @@
 @extends('layouts.storefront', ['title' => ($pageTitle ?? 'Products').' · Sunnah Sharee Ghar'])
 
 @section('content')
-    <section class="mx-auto max-w-7xl px-4 py-8">
-        <x-section-title :title="$pageTitle ?? 'Shop Products'" subtitle="Filter by saree type, color, occasion, fabric, work, availability, offer, and price." />
-        <div class="mt-8 grid gap-6 lg:grid-cols-[280px_1fr]">
-            <form class="rounded-lg border border-[#eadcc3] bg-white p-4 shadow-sm">
+    <section class="relative mx-auto max-w-7xl px-4 py-8">
+        <x-ui.page-pattern />
+        <div class="relative overflow-hidden rounded-lg border border-[#ead8ba] bg-gradient-to-br from-white via-[#fffaf4] to-[#fff7ea] p-8 shadow-sm">
+            <x-ui.corner-ornament position="top-right" class="hidden md:block" />
+            <x-section-title :title="$pageTitle ?? 'Shop Products'" subtitle="Filter by saree type, color, occasion, fabric, work, availability, offer, and price." />
+        </div>
+        <div class="relative mt-8 grid gap-6 lg:grid-cols-[280px_1fr]">
+            <form class="rounded-lg border border-[#ead8ba] bg-white/90 p-4 shadow-sm backdrop-blur">
                 <div class="grid gap-4">
                     <select name="category" class="rounded-lg border border-[#dfcda9] px-3 py-2">
                         <option value="">All Categories</option>
