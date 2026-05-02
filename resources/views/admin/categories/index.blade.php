@@ -11,10 +11,19 @@
     </div>
     <div class="overflow-x-auto rounded-lg border border-[#e5ded0] bg-white shadow-sm">
         <table class="w-full text-left text-sm">
-            <thead><tr class="border-b bg-[#faf8f3]"><th class="p-3">Name</th><th>Parent</th><th>Featured</th><th>Status</th><th></th></tr></thead>
+            <thead><tr class="border-b bg-[#faf8f3]"><th class="p-3">Image</th><th>Name</th><th>Parent</th><th>Featured</th><th>Status</th><th></th></tr></thead>
             <tbody>
             @foreach ($categories as $category)
-                <tr class="border-b"><td class="p-3 font-semibold">{{ $category->name }}</td><td>{{ $category->parent?->name ?? 'Root' }}</td><td>{{ $category->is_featured ? 'Yes' : 'No' }}</td><td>{{ $category->is_active ? 'Active' : 'Inactive' }}</td><td><a class="text-[#7a1f55] font-semibold" href="{{ route('admin.categories.edit', $category) }}">Edit</a></td></tr>
+                <tr class="border-b">
+                    <td class="p-3">
+                        @if ($category->image_url)
+                            <img src="{{ $category->image_url }}" alt="{{ $category->name }}" class="h-14 w-14 rounded-lg border border-[#eadcc3] object-cover">
+                        @else
+                            <span class="flex h-14 w-14 items-center justify-center rounded-lg border border-[#eadcc3] bg-[#faf8f3] text-xs text-[#8d786d]">No image</span>
+                        @endif
+                    </td>
+                    <td class="font-semibold">{{ $category->name }}</td><td>{{ $category->parent?->name ?? 'Root' }}</td><td>{{ $category->is_featured ? 'Yes' : 'No' }}</td><td>{{ $category->is_active ? 'Active' : 'Inactive' }}</td><td><a class="font-semibold text-[#7a1f55]" href="{{ route('admin.categories.edit', $category) }}">Edit</a></td>
+                </tr>
             @endforeach
             </tbody>
         </table>

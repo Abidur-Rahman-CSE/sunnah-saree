@@ -38,7 +38,7 @@ class OfferController extends Controller
     {
         return view('admin.offers.form', [
             'offer' => new Offer,
-            'products' => Product::query()->orderBy('name')->get(),
+            'products' => Product::query()->with(['category', 'images'])->orderBy('name')->get(),
         ]);
     }
 
@@ -68,7 +68,7 @@ class OfferController extends Controller
     {
         return view('admin.offers.form', [
             'offer' => $offer->load('products'),
-            'products' => Product::query()->orderBy('name')->get(),
+            'products' => Product::query()->with(['category', 'images'])->orderBy('name')->get(),
         ]);
     }
 

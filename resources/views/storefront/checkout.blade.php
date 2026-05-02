@@ -8,10 +8,10 @@
             <div class="rounded-lg border border-[#eadcc3] bg-white p-5 shadow-sm">
                 <h2 class="font-serif text-2xl font-bold">Customer Info</h2>
                 <div class="mt-5 grid gap-4 md:grid-cols-2">
-                    <input name="customer_name" value="{{ old('customer_name', auth()->user()?->name) }}" class="rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Name">
-                    <input name="customer_phone" value="{{ old('customer_phone', auth()->user()?->phone) }}" class="rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Phone">
-                    <input name="customer_email" value="{{ old('customer_email', auth()->user()?->email) }}" class="rounded-lg border border-[#dfcda9] px-4 py-3 md:col-span-2" placeholder="Email">
-                    <textarea name="shipping_address" class="rounded-lg border border-[#dfcda9] px-4 py-3 md:col-span-2" rows="4" placeholder="Shipping address">{{ old('shipping_address', auth()->user()?->address) }}</textarea>
+                    <x-admin.field label="Name"><input name="customer_name" value="{{ old('customer_name', auth()->user()?->name) }}" class="rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Name"></x-admin.field>
+                    <x-admin.field label="Phone"><input name="customer_phone" value="{{ old('customer_phone', auth()->user()?->phone) }}" class="rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Phone"></x-admin.field>
+                    <x-admin.field label="Email" span><input name="customer_email" value="{{ old('customer_email', auth()->user()?->email) }}" class="rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Email"></x-admin.field>
+                    <x-admin.field label="Shipping address" span><textarea name="shipping_address" class="rounded-lg border border-[#dfcda9] px-4 py-3" rows="4" placeholder="Shipping address">{{ old('shipping_address', auth()->user()?->address) }}</textarea></x-admin.field>
                 </div>
                 @if ($errors->any())
                     <div class="mt-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">{{ $errors->first() }}</div>

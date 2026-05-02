@@ -38,7 +38,7 @@ class ComboController extends Controller
     {
         return view('admin.combos.form', [
             'combo' => new Combo,
-            'products' => Product::query()->orderBy('name')->get(),
+            'products' => Product::query()->with(['category', 'images'])->orderBy('name')->get(),
         ]);
     }
 
@@ -68,7 +68,7 @@ class ComboController extends Controller
     {
         return view('admin.combos.form', [
             'combo' => $combo->load('items.product'),
-            'products' => Product::query()->orderBy('name')->get(),
+            'products' => Product::query()->with(['category', 'images'])->orderBy('name')->get(),
         ]);
     }
 

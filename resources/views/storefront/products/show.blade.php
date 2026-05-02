@@ -2,13 +2,19 @@
 
 @section('content')
     <section class="mx-auto grid max-w-7xl gap-8 px-4 py-8 lg:grid-cols-[1fr_0.9fr]">
-        <div class="grid gap-4 md:grid-cols-[96px_1fr]">
-            <div class="hidden gap-3 md:grid">
-                @foreach ($product->images as $image)
-                    <img src="{{ $image->image_url }}" alt="{{ $image->alt_text }}" class="aspect-square rounded-lg object-cover">
-                @endforeach
+        <div>
+            <div class="overflow-hidden rounded-lg border border-[#e5cf9b] bg-white p-2 shadow-xl shadow-[#7a1f55]/10">
+                <img id="product-main-image" src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" class="aspect-[4/5] w-full rounded-md object-cover">
             </div>
-            <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" class="aspect-[4/5] w-full rounded-lg object-cover shadow-xl">
+            @if ($product->images->count() > 1)
+                <div class="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-5">
+                    @foreach ($product->images as $image)
+                        <button type="button" class="rounded-lg border border-[#eadcc3] bg-white p-1 shadow-sm transition hover:border-[#8a155b]" data-gallery-image="{{ $image->image_url }}" aria-label="View {{ $image->alt_text ?: $product->name }} image">
+                            <img src="{{ $image->image_url }}" alt="{{ $image->alt_text ?: $product->name }}" class="aspect-square w-full rounded-md object-cover">
+                        </button>
+                    @endforeach
+                </div>
+            @endif
         </div>
         <div>
             <p class="text-sm font-bold uppercase text-[#c9a24a]">{{ $product->category->name }}</p>
@@ -23,12 +29,14 @@
 
             <form action="{{ route('cart.store', $product) }}" method="POST" class="mt-6 space-y-4">
                 @csrf
-                <select name="product_variant_id" class="w-full rounded-lg border border-[#dfcda9] bg-white px-4 py-3">
-                    @foreach ($product->variants as $variant)
-                        <option value="{{ $variant->id }}">{{ $variant->color }} · {{ $variant->quantity }} pcs</option>
-                    @endforeach
-                </select>
-                <input type="number" name="quantity" value="1" min="1" class="w-28 rounded-lg border border-[#dfcda9] px-4 py-3">
+                <x-admin.field label="Variant">
+                    <select name="product_variant_id" class="w-full rounded-lg border border-[#dfcda9] bg-white px-4 py-3">
+                        @foreach ($product->variants as $variant)
+                            <option value="{{ $variant->id }}">{{ $variant->color }} · {{ $variant->quantity }} pcs</option>
+                        @endforeach
+                    </select>
+                </x-admin.field>
+                <x-admin.field label="Quantity" class="max-w-32"><input type="number" name="quantity" value="1" min="1" class="rounded-lg border border-[#dfcda9] px-4 py-3"></x-admin.field>
                 <div class="flex flex-wrap gap-3">
                     <button class="rounded-lg bg-[#7a1f55] px-6 py-3 font-semibold text-white">Add to Cart</button>
                     <button formaction="{{ route('cart.store', $product) }}" class="rounded-lg bg-[#c9a24a] px-6 py-3 font-semibold text-white">Buy Now</button>
@@ -45,10 +53,18 @@
             <div class="mt-8 rounded-lg border border-[#eadcc3] bg-white p-5">
                 <h2 class="font-serif text-2xl font-bold">Product Details</h2>
                 <p class="mt-3 text-[#6f5a50]">{{ $product->description }}</p>
-                @if ($product->category->slug === 'sharee')
+                @if ($product->product_type !== 'general')
                     <dl class="mt-5 grid gap-3 text-sm md:grid-cols-2">
                         @foreach (['Sharee type' => $product->sharee_type, 'Fabric' => $product->fabric, 'Work type' => $product->work_type, 'Color' => $product->color, 'Occasion' => $product->occasion, 'Blouse included' => $product->blouse_included ? 'Yes' : 'No', 'Length' => $product->length, 'Care instruction' => $product->care_instruction] as $label => $value)
-                            <div class="rounded-lg bg-[#fffaf0] p-3"><dt class="font-semibold">{{ $label }}</dt><dd class="text-[#6f5a50]">{{ $value }}</dd></div>
+                            <div class="rounded-lg bg-[#fffaf0] p-3">
+                                <dt class="font-semibold">{{ $label }}</dt>
+                                <dd class="mt-1 flex items-center gap-2 text-[#6f5a50]">
+                                    @if ($label === 'Color' && $colorCode)
+                                        <span class="h-5 w-5 rounded-full border-2 border-white shadow-[0_0_0_1px_#d8b879]" style="background: {{ $colorCode }}"></span>
+                                    @endif
+                                    {{ $value }}
+                                </dd>
+                            </div>
                         @endforeach
                     </dl>
                 @endif
@@ -65,4 +81,15 @@
             @endforeach
         </div>
     </section>
+    <script>
+        document.querySelectorAll('[data-gallery-image]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const mainImage = document.getElementById('product-main-image');
+
+                if (mainImage) {
+                    mainImage.src = button.dataset.galleryImage;
+                }
+            });
+        });
+    </script>
 @endsection

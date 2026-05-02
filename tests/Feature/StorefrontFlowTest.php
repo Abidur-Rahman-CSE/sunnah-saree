@@ -54,3 +54,19 @@ test('admin can access the dashboard', function () {
         ->assertOk()
         ->assertSee('Dashboard');
 });
+
+test('product filters are scoped by selected category attributes', function () {
+    $this->seed();
+
+    $this->get(route('products.index', ['category' => 'sharee']))
+        ->assertOk()
+        ->assertSee('Sharee Type')
+        ->assertSee('Fabric')
+        ->assertSee('Color');
+
+    $this->get(route('products.index', ['category' => 'organic-oil']))
+        ->assertOk()
+        ->assertDontSee('Sharee Type')
+        ->assertDontSee('Fabric')
+        ->assertDontSee('Work Type');
+});

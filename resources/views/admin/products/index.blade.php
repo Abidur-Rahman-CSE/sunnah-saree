@@ -12,10 +12,28 @@
     </div>
     <div class="overflow-x-auto rounded-lg border border-[#e5ded0] bg-white shadow-sm">
         <table class="w-full text-left text-sm">
-            <thead><tr class="border-b bg-[#faf8f3]"><th class="p-3">Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+            <thead><tr class="border-b bg-[#faf8f3]"><th class="p-3">Image</th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
             <tbody>
             @foreach ($products as $product)
-                <tr class="border-b"><td class="p-3 font-semibold">{{ $product->name }}</td><td>{{ $product->category->name }}</td><td>৳{{ number_format($product->finalPrice()) }}</td><td>{{ $product->variants->sum('quantity') }}</td><td>{{ $product->is_active ? 'Active' : 'Inactive' }}</td><td><a class="font-semibold text-[#7a1f55]" href="{{ route('admin.products.edit', $product) }}">Edit</a></td></tr>
+                <tr class="border-b">
+                    <td class="p-3">
+                        <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" class="h-14 w-14 rounded-lg border border-[#eadcc3] object-cover">
+                    </td>
+                    <td class="font-semibold">{{ $product->name }}</td>
+                    <td>{{ $product->category->name }}</td>
+                    <td>৳{{ number_format($product->finalPrice()) }}</td>
+                    <td>{{ $product->variants->sum('quantity') }}</td>
+                    <td>{{ $product->is_active ? 'Active' : 'Inactive' }}</td>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <a class="font-semibold text-[#7a1f55]" href="{{ route('admin.products.edit', $product) }}">Edit</a>
+                            <form action="{{ route('admin.products.duplicate', $product) }}" method="POST">
+                                @csrf
+                                <button class="font-semibold text-[#b78336]">Duplicate</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
             @endforeach
             </tbody>
         </table>

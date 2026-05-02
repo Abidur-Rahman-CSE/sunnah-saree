@@ -13,20 +13,6 @@
             'Daily Wear Sharee',
         ];
 
-        $colors = [
-            'Royal Blue' => '#173b8f',
-            'Maroon' => '#7a1f2b',
-            'Magenta' => '#b31972',
-            'Purple' => '#6b3aa8',
-            'Gold' => '#c9a24a',
-            'Black' => '#1f1f1f',
-            'Pastel Pink' => '#f2b7c6',
-            'Bottle Green' => '#08734c',
-            'Teal' => '#108d86',
-            'Mustard' => '#d79b2f',
-            'Wine' => '#8b1d46',
-        ];
-
         $essentials = [
             [
                 'name' => 'Organic Oil',
@@ -98,10 +84,10 @@
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Colors That Celebrate You" subtitle="Explore shades that suit every mood." />
         <div class="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11">
-            @foreach ($colors as $name => $hex)
-                <a href="{{ route('products.index', ['color' => $name]) }}" class="text-center text-xs font-medium text-[#5a463c]">
-                    <span class="mx-auto mb-2 block h-12 w-12 rounded-full border-4 border-white shadow-[0_0_0_1px_#d8b879,0_8px_18px_rgba(89,61,48,0.16)]" style="background: {{ $hex }}"></span>
-                    {{ $name }}
+            @foreach ($colorOptions as $color)
+                <a href="{{ route('products.index', ['color' => $color['name']]) }}" class="text-center text-xs font-medium text-[#5a463c]">
+                    <span class="mx-auto mb-2 block h-12 w-12 rounded-full border-4 border-white shadow-[0_0_0_1px_#d8b879,0_8px_18px_rgba(89,61,48,0.16)]" style="background: {{ $color['code'] }}"></span>
+                    {{ $color['name'] }}
                 </a>
             @endforeach
         </div>

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FashionAttributeController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentController;
@@ -26,6 +27,7 @@ Route::get('/products/{product:slug}', [StorefrontController::class, 'product'])
 Route::get('/categories/{category:slug}', [StorefrontController::class, 'category'])->name('categories.show');
 Route::get('/collections/{collection:slug}', [StorefrontController::class, 'collection'])->name('collections.show');
 Route::get('/offers', [StorefrontController::class, 'offers'])->name('offers.index');
+Route::get('/offers/{offer:slug}', [StorefrontController::class, 'offer'])->name('offers.show');
 Route::get('/combos', [StorefrontController::class, 'combos'])->name('combos.index');
 Route::get('/pages/{page}', [StorefrontController::class, 'staticPage'])->name('pages.show');
 
@@ -65,6 +67,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/', DashboardController::class)->name('dashboard');
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
+    Route::post('products/{product}/duplicate', [ProductController::class, 'duplicate'])->name('products.duplicate');
+    Route::resource('fashion-attributes', FashionAttributeController::class);
     Route::resource('collections', CollectionController::class);
     Route::resource('offers', OfferController::class);
     Route::resource('combos', ComboController::class);

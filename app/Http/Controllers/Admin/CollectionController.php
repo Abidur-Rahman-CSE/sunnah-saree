@@ -38,7 +38,7 @@ class CollectionController extends Controller
     {
         return view('admin.collections.form', [
             'collection' => new Collection,
-            'products' => Product::query()->orderBy('name')->get(),
+            'products' => Product::query()->with(['category', 'images'])->orderBy('name')->get(),
         ]);
     }
 
@@ -68,7 +68,7 @@ class CollectionController extends Controller
     {
         return view('admin.collections.form', [
             'collection' => $collection->load('products'),
-            'products' => Product::query()->orderBy('name')->get(),
+            'products' => Product::query()->with(['category', 'images'])->orderBy('name')->get(),
         ]);
     }
 

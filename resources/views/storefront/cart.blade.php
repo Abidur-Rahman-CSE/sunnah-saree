@@ -15,7 +15,8 @@
                         <div class="flex items-center gap-2">
                             <form action="{{ route('cart.update', $item) }}" method="POST" class="flex gap-2">
                                 @csrf @method('PATCH')
-                                <input name="quantity" value="{{ $item->quantity }}" type="number" min="1" class="w-20 rounded-lg border border-[#dfcda9] px-3 py-2">
+                                <label class="sr-only" for="cart-quantity-{{ $item->id }}">Quantity for {{ $item->product->name }}</label>
+                                <input id="cart-quantity-{{ $item->id }}" name="quantity" value="{{ $item->quantity }}" type="number" min="1" class="w-20 rounded-lg border border-[#dfcda9] px-3 py-2" aria-label="Quantity for {{ $item->product->name }}">
                                 <button class="rounded-lg border border-[#7a1f55] px-3 py-2 text-sm font-semibold text-[#7a1f55]">Update</button>
                             </form>
                             <form action="{{ route('cart.destroy', $item) }}" method="POST">
@@ -42,7 +43,8 @@
                     @else
                         <form action="{{ route('cart.coupon.apply') }}" method="POST" class="flex gap-2">
                             @csrf
-                            <input name="coupon_code" value="{{ old('coupon_code') }}" class="min-w-0 flex-1 rounded-lg border border-[#dfcda9] px-3 py-2 text-sm" placeholder="Coupon code">
+                            <label class="sr-only" for="coupon-code">Coupon code</label>
+                            <input id="coupon-code" name="coupon_code" value="{{ old('coupon_code') }}" class="min-w-0 flex-1 rounded-lg border border-[#dfcda9] px-3 py-2 text-sm" placeholder="Coupon code">
                             <button class="rounded-lg bg-[#7a1f55] px-3 py-2 text-sm font-semibold text-white">Apply</button>
                         </form>
                     @endif

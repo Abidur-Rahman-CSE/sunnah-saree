@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Category;
 use App\Models\Collection;
+use App\Models\FashionAttribute;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Support\AdminImage;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -22,7 +24,7 @@ class ProductController extends Controller
     public function index(Request $request): View
     {
         $products = Product::query()
-            ->with(['category', 'variants'])
+            ->with(['category', 'images', 'variants'])
             ->when($request->filled('search'), fn ($query) => $query->where(fn ($search) => $search
                 ->where('name', 'like', '%'.$request->string('search')->toString().'%')
                 ->orWhere('sku', 'like', '%'.$request->string('search')->toString().'%')
@@ -46,6 +48,7 @@ class ProductController extends Controller
             'product' => new Product,
             'categories' => Category::query()->orderBy('name')->get(),
             'collections' => Collection::query()->orderBy('name')->get(),
+            'fashionOptions' => $this->fashionOptions(),
         ]);
     }
 
@@ -77,6 +80,7 @@ class ProductController extends Controller
             'product' => $product->load('collections', 'images', 'variants'),
             'categories' => Category::query()->orderBy('name')->get(),
             'collections' => Collection::query()->orderBy('name')->get(),
+            'fashionOptions' => $this->fashionOptions(),
         ]);
     }
 
@@ -101,6 +105,33 @@ class ProductController extends Controller
         return to_route('admin.products.index')->with('status', 'Product deleted.');
     }
 
+    public function duplicate(Product $product): RedirectResponse
+    {
+        $product->load('collections', 'images', 'variants');
+
+        $copy = $product->replicate();
+        $copy->name = $product->name.' Copy';
+        $copy->slug = $this->uniqueSlug($product->slug.'-copy');
+        $copy->sku = $this->uniqueSku($product->sku.'-COPY');
+        $copy->is_active = false;
+        $copy->save();
+
+        $copy->collections()->sync($product->collections->pluck('id'));
+
+        foreach ($product->images as $image) {
+            $copy->images()->create($image->only(['image_url', 'alt_text', 'sort_order']));
+        }
+
+        foreach ($product->variants as $variant) {
+            $variantCopy = $variant->replicate();
+            $variantCopy->product_id = $copy->id;
+            $variantCopy->sku = $this->uniqueVariantSku($variant->sku.'-COPY');
+            $variantCopy->save();
+        }
+
+        return to_route('admin.products.edit', $copy)->with('status', 'Product duplicated. Review and activate when ready.');
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -108,8 +139,8 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        return [
-            ...Arr::except($validated, ['collection_ids', 'image_url', 'image_file', 'variant_color', 'variant_sku', 'variant_quantity']),
+        $payload = [
+            ...Arr::except($validated, ['collection_ids', 'image_url', 'image_file', 'image_files', 'variant_color', 'variant_sku', 'variant_quantity']),
             'slug' => ($validated['slug'] ?? null) ?: Str::slug($validated['name']),
             'blouse_included' => $request->boolean('blouse_included'),
             'is_active' => $request->boolean('is_active'),
@@ -117,6 +148,19 @@ class ProductController extends Controller
             'is_best_seller' => $request->boolean('is_best_seller'),
             'is_new_arrival' => $request->boolean('is_new_arrival'),
         ];
+
+        if (($payload['product_type'] ?? null) === 'general') {
+            $payload['sharee_type'] = null;
+            $payload['fabric'] = null;
+            $payload['work_type'] = null;
+            $payload['color'] = null;
+            $payload['occasion'] = null;
+            $payload['blouse_included'] = false;
+            $payload['length'] = null;
+            $payload['care_instruction'] = null;
+        }
+
+        return $payload;
     }
 
     private function syncExtras(ProductRequest $request, Product $product): void
@@ -133,6 +177,14 @@ class ProductController extends Controller
             );
         }
 
+        foreach ($request->file('image_files', []) as $uploadedGalleryImage) {
+            $product->images()->create([
+                'image_url' => app(AdminImage::class)->store($uploadedGalleryImage, 'products'),
+                'alt_text' => $product->name,
+                'sort_order' => ((int) $product->images()->max('sort_order')) + 1,
+            ]);
+        }
+
         if ($request->filled('variant_color') && $request->filled('variant_sku')) {
             $product->variants()->updateOrCreate(
                 ['sku' => $request->string('variant_sku')],
@@ -144,5 +196,55 @@ class ProductController extends Controller
                 ],
             );
         }
+    }
+
+    /**
+     * @return array<string, \Illuminate\Support\Collection<int, string>>
+     */
+    private function fashionOptions(): array
+    {
+        return collect(['sharee_type', 'fabric', 'work_type', 'color', 'occasion'])
+            ->mapWithKeys(fn (string $key): array => [$key => FashionAttribute::valuesFor($key)])
+            ->all();
+    }
+
+    private function uniqueSlug(string $slug): string
+    {
+        $base = Str::slug($slug);
+        $candidate = $base;
+        $counter = 2;
+
+        while (Product::query()->where('slug', $candidate)->exists()) {
+            $candidate = $base.'-'.$counter;
+            $counter++;
+        }
+
+        return $candidate;
+    }
+
+    private function uniqueSku(string $sku): string
+    {
+        $candidate = Str::upper($sku);
+        $counter = 2;
+
+        while (Product::query()->where('sku', $candidate)->exists()) {
+            $candidate = Str::upper($sku).'-'.$counter;
+            $counter++;
+        }
+
+        return $candidate;
+    }
+
+    private function uniqueVariantSku(string $sku): string
+    {
+        $candidate = Str::upper($sku);
+        $counter = 2;
+
+        while (ProductVariant::query()->where('sku', $candidate)->exists()) {
+            $candidate = Str::upper($sku).'-'.$counter;
+            $counter++;
+        }
+
+        return $candidate;
     }
 }

@@ -16,6 +16,7 @@
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.dashboard') }}">Dashboard</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.categories.index') }}">Categories</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.products.index') }}">Products</a>
+                <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.fashion-attributes.index') }}">Fashion Attributes</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.collections.index') }}">Collections</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.offers.index') }}">Offers</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.combos.index') }}">Combos</a>
@@ -41,5 +42,156 @@
             </main>
         </div>
     </div>
+    <script>
+        document.querySelectorAll('[data-image-preview]').forEach((input) => {
+            input.addEventListener('change', () => {
+                const target = document.getElementById(input.dataset.imagePreview);
+
+                if (! target) {
+                    return;
+                }
+
+                target.innerHTML = '';
+
+                Array.from(input.files).forEach((file) => {
+                    const image = document.createElement('img');
+
+                    image.src = URL.createObjectURL(file);
+                    image.alt = file.name;
+                    image.className = 'aspect-square rounded-lg border border-[#eadcc3] object-cover';
+                    image.onload = () => URL.revokeObjectURL(image.src);
+
+                    target.appendChild(image);
+                });
+            });
+        });
+
+        document.querySelectorAll('[data-product-picker]').forEach((picker) => {
+            const modal = picker.querySelector('[data-picker-modal]');
+            const search = picker.querySelector('[data-picker-search]');
+            const category = picker.querySelector('[data-picker-category]');
+            const rows = Array.from(picker.querySelectorAll('[data-picker-row]'));
+            const checkboxes = Array.from(picker.querySelectorAll('[data-picker-checkbox]'));
+            const selectedCount = picker.querySelector('[data-selected-count]');
+            const selectedList = picker.querySelector('[data-selected-list]');
+            const empty = picker.querySelector('[data-picker-empty]');
+
+            const setModal = (isOpen) => {
+                modal?.classList.toggle('hidden', ! isOpen);
+                modal?.classList.toggle('flex', isOpen);
+            };
+
+            const refreshSelection = () => {
+                const selected = checkboxes.filter((checkbox) => checkbox.checked);
+
+                if (selectedCount) {
+                    selectedCount.textContent = selected.length;
+                }
+
+                if (selectedList) {
+                    selectedList.innerHTML = '';
+
+                    selected.forEach((checkbox) => {
+                        const chip = document.createElement('span');
+
+                        chip.className = 'rounded-full border border-[#eadcc3] bg-white px-3 py-1 text-xs font-semibold text-[#7a1f55]';
+                        chip.textContent = checkbox.dataset.productName;
+
+                        selectedList.appendChild(chip);
+                    });
+                }
+            };
+
+            const filterRows = () => {
+                const term = (search?.value || '').trim().toLowerCase();
+                const selectedCategory = category?.value || '';
+                let visibleRows = 0;
+
+                rows.forEach((row) => {
+                    const matchesSearch = ! term || row.dataset.search.includes(term);
+                    const matchesCategory = ! selectedCategory || row.dataset.category === selectedCategory;
+                    const isVisible = matchesSearch && matchesCategory;
+
+                    row.classList.toggle('hidden', ! isVisible);
+
+                    if (isVisible) {
+                        visibleRows += 1;
+                    }
+                });
+
+                empty?.classList.toggle('hidden', visibleRows > 0);
+            };
+
+            picker.querySelectorAll('[data-picker-open]').forEach((button) => {
+                button.addEventListener('click', () => setModal(true));
+            });
+
+            picker.querySelectorAll('[data-picker-close]').forEach((button) => {
+                button.addEventListener('click', () => setModal(false));
+            });
+
+            picker.querySelector('[data-picker-clear]')?.addEventListener('click', () => {
+                checkboxes.forEach((checkbox) => {
+                    checkbox.checked = false;
+                });
+                refreshSelection();
+            });
+
+            modal?.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    setModal(false);
+                }
+            });
+
+            search?.addEventListener('input', filterRows);
+            category?.addEventListener('change', filterRows);
+            checkboxes.forEach((checkbox) => checkbox.addEventListener('change', refreshSelection));
+
+            refreshSelection();
+            filterRows();
+        });
+
+        document.querySelectorAll('[data-product-type]').forEach((select) => {
+            const form = select.closest('form');
+            const fields = form ? Array.from(form.querySelectorAll('[data-fashion-fields]')) : [];
+            const syncProductType = () => {
+                fields.forEach((field) => {
+                    field.classList.toggle('hidden', select.value === 'general');
+                });
+            };
+
+            select.addEventListener('change', syncProductType);
+            syncProductType();
+        });
+
+        document.querySelectorAll('[data-attribute-key]').forEach((select) => {
+            const form = select.closest('form');
+            const textValues = form?.querySelector('[data-text-values]');
+            const colorValues = form?.querySelector('[data-color-values]');
+            const colorRows = form?.querySelector('[data-color-rows]');
+            const template = form?.querySelector('[data-color-row-template]');
+            const syncAttributeKey = () => {
+                textValues?.classList.toggle('hidden', select.value === 'color');
+                colorValues?.classList.toggle('hidden', select.value !== 'color');
+            };
+
+            form?.querySelector('[data-add-color-row]')?.addEventListener('click', () => {
+                if (template && colorRows) {
+                    colorRows.appendChild(template.content.cloneNode(true));
+                }
+            });
+
+            form?.addEventListener('click', (event) => {
+                const button = event.target.closest('[data-remove-color-row]');
+
+                if (button) {
+                    button.closest('[data-color-row]')?.remove();
+                }
+            });
+
+            select.addEventListener('change', syncAttributeKey);
+            syncAttributeKey();
+        });
+    </script>
 </body>
 </html>

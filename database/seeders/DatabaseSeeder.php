@@ -6,6 +6,7 @@ use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Collection;
 use App\Models\Combo;
+use App\Models\FashionAttribute;
 use App\Models\Offer;
 use App\Models\Product;
 use App\Models\Setting;
@@ -72,6 +73,25 @@ class DatabaseSeeder extends Seeder
             ),
         ]);
 
+        collect([
+            'sharee_type' => ['name' => 'Fashion Type', 'values' => ['Katan Sharee', 'Chumki Sharee', 'Banarasi Sharee', 'Cotton Sharee', 'Silk Sharee', 'Bridal Sharee', 'Party Wear Sharee', 'Daily Wear Sharee']],
+            'fabric' => ['name' => 'Fabric', 'values' => ['Silk blend', 'Georgette', 'Banarasi silk', 'Soft cotton', 'Pure silk', 'Katan silk', 'Chiffon']],
+            'work_type' => ['name' => 'Work Type', 'values' => ['Zari border', 'Chumki work', 'Heavy zari', 'Printed', 'Resham work', 'Embroidered zari', 'Stone work']],
+            'color' => ['name' => 'Color', 'values' => [
+                ['name' => 'Royal Blue', 'code' => '#173b8f'],
+                ['name' => 'Maroon', 'code' => '#7a1f2b'],
+                ['name' => 'Magenta', 'code' => '#b31972'],
+                ['name' => 'Pastel', 'code' => '#f2b7c6'],
+                ['name' => 'Purple', 'code' => '#6b3aa8'],
+                ['name' => 'Gold', 'code' => '#c9a24a'],
+                ['name' => 'Black', 'code' => '#1f1f1f'],
+            ]],
+            'occasion' => ['name' => 'Occasion', 'values' => ['Wedding', 'Party Wear', 'Bridal', 'Daily Wear', 'Eid', 'Gift']],
+        ])->each(fn (array $data, string $key): FashionAttribute => FashionAttribute::query()->updateOrCreate(
+            ['key' => $key],
+            ['name' => $data['name'], 'values' => $data['values'], 'is_active' => true],
+        ));
+
         $products = collect([
             ['Royal Blue Katan Sharee', 'Katan Sharee', 'Royal Blue', 6850, 5990, 'Silk blend', 'Zari border', 'Wedding', true],
             ['Maroon Chumki Party Sharee', 'Chumki Sharee', 'Maroon', 5250, 4590, 'Georgette', 'Chumki work', 'Party Wear', false],
@@ -90,7 +110,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'category_id' => $categories[$categoryName]->id,
                     'name' => $name,
-                    'product_type' => $categoryName,
+                    'product_type' => $categoryName === 'Sharee' ? 'fashion' : 'general',
                     'price' => $price,
                     'discount_price' => $discount,
                     'sku' => Str::upper(Str::slug($name, '-')),

@@ -44,6 +44,8 @@ class ProductRequest extends FormRequest
             'care_instruction' => ['nullable', 'string'],
             'image_url' => ['nullable', 'url', 'max:2048'],
             'image_file' => ['nullable', 'image', 'max:4096'],
+            'image_files' => ['nullable', 'array', 'max:10'],
+            'image_files.*' => ['image', 'max:4096'],
             'variant_color' => ['nullable', 'string', 'max:255'],
             'variant_sku' => ['nullable', 'string', 'max:255'],
             'variant_quantity' => ['nullable', 'integer', 'min:0'],

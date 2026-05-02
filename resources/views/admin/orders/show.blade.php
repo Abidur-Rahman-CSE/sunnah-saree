@@ -16,9 +16,9 @@
             @csrf @method('PATCH')
             <h2 class="font-bold">Manage Order</h2>
             <div class="mt-4 grid gap-4">
-                <select name="status" class="rounded-lg border border-[#ddd4c4] px-4 py-3">@foreach (['pending','confirmed','processing','shipped','delivered','cancelled'] as $status)<option value="{{ $status }}" @selected($order->status === $status)>{{ str($status)->title() }}</option>@endforeach</select>
-                <select name="payment_status" class="rounded-lg border border-[#ddd4c4] px-4 py-3">@foreach (['pending','paid','failed','cancelled','refunded'] as $status)<option value="{{ $status }}" @selected($order->payment_status === $status)>{{ str($status)->title() }}</option>@endforeach</select>
-                <textarea name="admin_note" rows="4" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Admin note">{{ $order->admin_note }}</textarea>
+                <x-admin.field label="Order status"><select name="status" class="rounded-lg border border-[#ddd4c4] px-4 py-3">@foreach (['pending','confirmed','processing','shipped','delivered','cancelled'] as $status)<option value="{{ $status }}" @selected($order->status === $status)>{{ str($status)->title() }}</option>@endforeach</select></x-admin.field>
+                <x-admin.field label="Payment status"><select name="payment_status" class="rounded-lg border border-[#ddd4c4] px-4 py-3">@foreach (['pending','paid','failed','cancelled','refunded'] as $status)<option value="{{ $status }}" @selected($order->payment_status === $status)>{{ str($status)->title() }}</option>@endforeach</select></x-admin.field>
+                <x-admin.field label="Admin note"><textarea name="admin_note" rows="4" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Admin note">{{ $order->admin_note }}</textarea></x-admin.field>
                 <button class="rounded-lg bg-[#7a1f55] px-4 py-3 font-semibold text-white">Update Order</button>
             </div>
         </form>
