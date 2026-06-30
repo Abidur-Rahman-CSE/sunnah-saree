@@ -20,18 +20,21 @@
             </a>
             <form action="{{ route('products.index') }}" class="flex min-w-0 overflow-hidden rounded-lg border border-[#d8b879] bg-white shadow-inner">
                 <input name="search" value="{{ request('search') }}" class="min-w-0 flex-1 px-3 py-2 text-xs outline-none sm:px-4 sm:py-3 sm:text-sm" placeholder="Search sharee...">
-                <button class="shrink-0 bg-[#8a155b] px-3 text-xs font-semibold text-white transition hover:bg-[#6f1047] sm:px-5 sm:text-sm">Search</button>
+                <button class="inline-flex shrink-0 items-center gap-2 bg-[#8a155b] px-3 text-xs font-semibold text-white transition hover:bg-[#6f1047] sm:px-5 sm:text-sm">
+                    <x-storefront.icon name="search" class="h-4 w-4" />
+                    <span class="hidden sm:inline">Search</span>
+                </button>
             </form>
             <button type="button" class="grid h-10 w-10 place-items-center rounded-lg border border-[#dfcda9] bg-white text-[#7a1f55] shadow-sm lg:hidden" data-mobile-menu-toggle aria-expanded="false" aria-controls="mobile-storefront-menu">
                 <span class="sr-only">Open menu</span>
-                <span class="text-xl leading-none">☰</span>
+                <x-storefront.icon name="bars" class="h-5 w-5" />
             </button>
             <nav class="hidden min-w-0 grid-cols-5 gap-1 text-center text-[11px] font-semibold text-[#4f3d35] sm:gap-2 sm:text-xs lg:grid">
-                <a href="{{ route('offers.index') }}" class="rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><span class="block text-lg">✧</span>Offers</a>
-                <a href="{{ route('combos.index') }}" class="rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><span class="block text-lg">◇</span>Combos</a>
-                <a href="{{ auth()->check() ? route('account.wishlist.index') : route('login') }}" class="rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><span class="block text-lg">♡</span>Wishlist</a>
-                <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}" class="rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><span class="block text-lg">♙</span>Account</a>
-                <a href="{{ route('cart.index') }}" class="rounded-lg px-2 py-2 text-[#8a155b] transition hover:bg-white"><span class="block text-lg">▱</span>Cart</a>
+                <a href="{{ route('offers.index') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="sparkles" class="h-5 w-5" />Offers</a>
+                <a href="{{ route('combos.index') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="gift" class="h-5 w-5" />Combos</a>
+                <a href="{{ auth()->check() ? route('account.wishlist.index') : route('login') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="heart" class="h-5 w-5" />Wishlist</a>
+                <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="user" class="h-5 w-5" />Account</a>
+                <a href="{{ route('cart.index') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 text-[#8a155b] transition hover:bg-white"><x-storefront.icon name="shopping-bag" class="h-5 w-5" />Cart</a>
             </nav>
         </div>
         <nav class="mx-auto hidden max-w-7xl snap-x gap-3 overflow-x-auto px-4 pb-4 text-xs font-semibold uppercase tracking-wide text-[#5a463c] sm:gap-6 lg:flex">
@@ -48,12 +51,12 @@
         </nav>
         <div id="mobile-storefront-menu" class="hidden border-t border-[#ead8ba] bg-[#fffaf4] px-4 pb-4 lg:hidden" data-mobile-menu>
             <div class="grid grid-cols-2 gap-2 pt-4 text-sm font-semibold text-[#4f3d35]">
-                <a href="{{ route('offers.index') }}" class="rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center">Offers</a>
-                <a href="{{ route('combos.index') }}" class="rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center">Combos</a>
-                <a href="{{ auth()->check() ? route('account.wishlist.index') : route('login') }}" class="rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center">Wishlist</a>
-                <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}" class="rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center">Account</a>
-                <a href="{{ route('cart.index') }}" class="rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center text-[#8a155b]">Cart</a>
-                <a href="{{ route('pages.show', 'contact-us') }}" class="rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center">Contact</a>
+                <a href="{{ route('offers.index') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="sparkles" class="h-4 w-4" />Offers</a>
+                <a href="{{ route('combos.index') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="gift" class="h-4 w-4" />Combos</a>
+                <a href="{{ auth()->check() ? route('account.wishlist.index') : route('login') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="heart" class="h-4 w-4" />Wishlist</a>
+                <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="user" class="h-4 w-4" />Account</a>
+                <a href="{{ route('cart.index') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center text-[#8a155b]"><x-storefront.icon name="shopping-bag" class="h-4 w-4" />Cart</a>
+                <a href="{{ route('pages.show', 'contact-us') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="phone" class="h-4 w-4" />Contact</a>
             </div>
             <div class="mt-3 grid grid-cols-2 gap-2 text-xs font-bold uppercase tracking-wide text-[#5a463c]">
                 <a href="{{ route('products.index') }}" class="rounded-lg bg-[#fff6e8] px-3 py-2 text-center">All Products</a>
