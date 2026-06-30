@@ -29,9 +29,9 @@
         @if ($featuredProducts->isNotEmpty())
             <div class="mt-10">
                 <x-section-title title="Collection Highlights" subtitle="A quick carousel of selected pieces from this collection." />
-                <div class="mt-6 flex snap-x gap-5 overflow-x-auto pb-3">
+                <div class="mt-6 flex snap-x gap-3 overflow-x-auto pb-3 sm:gap-5">
                     @foreach ($featuredProducts as $product)
-                        <div class="min-w-64 snap-start">
+                        <div class="min-w-[calc(50%-0.375rem)] snap-start sm:min-w-56 lg:min-w-64">
                             <x-storefront.product-card :product="$product" />
                         </div>
                     @endforeach

@@ -3,15 +3,15 @@
 @section('content')
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Checkout" subtitle="Cash on delivery is ready. Online payment has placeholder structure for gateway integration." />
-        <form action="{{ route('checkout.store') }}" method="POST" class="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
+        <form action="{{ route('checkout.store') }}" method="POST" class="mt-8 grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
             @csrf
-            <div class="rounded-lg border border-[#eadcc3] bg-white p-5 shadow-sm">
+            <div class="min-w-0 rounded-lg border border-[#eadcc3] bg-white p-5 shadow-sm">
                 <h2 class="font-serif text-2xl font-bold">Customer Info</h2>
                 <div class="mt-5 grid gap-4 md:grid-cols-2">
-                    <x-admin.field label="Name"><input name="customer_name" value="{{ old('customer_name', auth()->user()?->name) }}" class="rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Name"></x-admin.field>
-                    <x-admin.field label="Phone"><input name="customer_phone" value="{{ old('customer_phone', auth()->user()?->phone) }}" class="rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Phone"></x-admin.field>
-                    <x-admin.field label="Email" span><input name="customer_email" value="{{ old('customer_email', auth()->user()?->email) }}" class="rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Email"></x-admin.field>
-                    <x-admin.field label="Shipping address" span><textarea name="shipping_address" class="rounded-lg border border-[#dfcda9] px-4 py-3" rows="4" placeholder="Shipping address">{{ old('shipping_address', auth()->user()?->address) }}</textarea></x-admin.field>
+                    <x-admin.field label="Name"><input name="customer_name" value="{{ old('customer_name', auth()->user()?->name) }}" class="w-full min-w-0 rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Name"></x-admin.field>
+                    <x-admin.field label="Phone"><input name="customer_phone" value="{{ old('customer_phone', auth()->user()?->phone) }}" class="w-full min-w-0 rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Phone"></x-admin.field>
+                    <x-admin.field label="Email" span><input name="customer_email" value="{{ old('customer_email', auth()->user()?->email) }}" class="w-full min-w-0 rounded-lg border border-[#dfcda9] px-4 py-3" placeholder="Email"></x-admin.field>
+                    <x-admin.field label="Shipping address" span><textarea name="shipping_address" class="w-full min-w-0 rounded-lg border border-[#dfcda9] px-4 py-3" rows="4" placeholder="Shipping address">{{ old('shipping_address', auth()->user()?->address) }}</textarea></x-admin.field>
                 </div>
                 @if ($errors->any())
                     <div class="mt-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">{{ $errors->first() }}</div>
@@ -26,7 +26,7 @@
                 <h2 class="font-serif text-2xl font-bold">Summary</h2>
                 <div class="mt-4 space-y-3 text-sm">
                     @foreach ($cart->items as $item)
-                        <div class="flex justify-between gap-3"><span>{{ $item->product->name }} x {{ $item->quantity }}</span><span>৳{{ number_format($item->lineTotal()) }}</span></div>
+                        <div class="flex justify-between gap-3"><span class="min-w-0">{{ $item->product->name }} x {{ $item->quantity }}</span><span class="shrink-0">৳{{ number_format($item->lineTotal()) }}</span></div>
                     @endforeach
                 </div>
                 <div class="mt-5 grid gap-3 border-t border-[#eadcc3] pt-4 text-sm">

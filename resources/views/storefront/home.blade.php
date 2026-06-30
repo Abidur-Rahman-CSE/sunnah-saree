@@ -50,21 +50,21 @@
         ];
     @endphp
 
-    <section class="mx-auto grid max-w-7xl gap-8 px-4 py-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <div class="py-8">
+    <section class="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:gap-8 sm:py-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <div class="py-4 sm:py-8">
             <p class="text-sm font-bold uppercase text-[#c9a24a]">Premium light boutique</p>
-            <h1 class="mt-3 max-w-3xl font-serif text-4xl font-bold leading-tight text-[#2f241f] md:text-6xl">{{ $hero?->headline ?? 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
-            <p class="mt-5 max-w-2xl text-lg text-[#6f5a50]">No model photos needed. Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
+            <h1 class="mt-3 max-w-3xl font-serif text-4xl font-bold leading-tight text-[#2f241f] sm:text-5xl md:text-6xl">{{ $hero?->headline ?? 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
+            <p class="mt-5 max-w-2xl text-base leading-7 text-[#6f5a50] sm:text-lg">No model photos needed. Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
             <div class="mt-8 flex flex-wrap gap-3">
-                <a href="{{ route('products.index', ['category' => 'sharee']) }}" class="rounded-lg bg-[#8a155b] px-6 py-3 font-semibold text-white shadow-lg shadow-[#8a155b]/20 transition hover:bg-[#6f1047]">{{ $hero?->cta_label ?? 'Shop Sharee' }}</a>
-                <a href="{{ route('offers.index') }}" class="rounded-lg border border-[#c9a24a] bg-white px-6 py-3 font-semibold text-[#8a155b] transition hover:border-[#8a155b]">View Offers</a>
+                <a href="{{ route('products.index', ['category' => 'sharee']) }}" class="flex-1 rounded-lg bg-[#8a155b] px-5 py-3 text-center font-semibold text-white shadow-lg shadow-[#8a155b]/20 transition hover:bg-[#6f1047] sm:flex-none sm:px-6">{{ $hero?->cta_label ?? 'Shop Sharee' }}</a>
+                <a href="{{ route('offers.index') }}" class="flex-1 rounded-lg border border-[#c9a24a] bg-white px-5 py-3 text-center font-semibold text-[#8a155b] transition hover:border-[#8a155b] sm:flex-none sm:px-6">View Offers</a>
             </div>
         </div>
         <div class="relative">
             <img src="{{ $hero?->image_url ?? 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=1600&q=80' }}" alt="Premium fabric flat-lay" class="aspect-[4/3] w-full rounded-lg border border-[#d8b879] object-cover shadow-2xl shadow-[#7a1f55]/10">
-            <div class="absolute bottom-4 left-4 rounded-lg border border-[#ead8ba] bg-white/90 p-4 shadow-lg backdrop-blur">
+            <div class="absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] rounded-lg border border-[#ead8ba] bg-white/90 p-3 shadow-lg backdrop-blur sm:bottom-4 sm:left-4 sm:p-4">
                 <p class="text-xs font-bold uppercase tracking-wide text-[#c9a24a]">Featured</p>
-                <p class="font-serif text-xl font-bold">Bridal boutique edit</p>
+                <p class="font-serif text-lg font-bold sm:text-xl">Bridal boutique edit</p>
             </div>
         </div>
     </section>
@@ -73,8 +73,8 @@
         <x-section-title title="Find Your Perfect Weave" subtitle="Curated for every occasion and style." />
         <div class="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
             @foreach ($shareeTypes as $type)
-                <a href="{{ route('products.index', ['sharee_type' => $type]) }}" class="group flex items-center gap-4 rounded-lg border border-[#ead8ba] bg-white/80 p-5 font-serif text-base font-bold shadow-sm transition hover:border-[#b78a34] hover:bg-white hover:shadow-md">
-                    <span class="grid h-10 w-10 place-items-center rounded-lg bg-[#fff6e6] text-[#b78a34] transition group-hover:bg-[#8a155b] group-hover:text-white">✥</span>
+                <a href="{{ route('products.index', ['sharee_type' => $type]) }}" class="group flex min-w-0 items-center gap-3 rounded-lg border border-[#ead8ba] bg-white/80 p-3 font-serif text-sm font-bold shadow-sm transition hover:border-[#b78a34] hover:bg-white hover:shadow-md sm:gap-4 sm:p-5 sm:text-base">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[#fff6e6] text-[#b78a34] transition group-hover:bg-[#8a155b] group-hover:text-white sm:h-10 sm:w-10">✥</span>
                     {{ $type }}
                 </a>
             @endforeach
@@ -95,7 +95,7 @@
 
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Best Sellers" subtitle="Customer favorites handpicked from our premium sharee edits." />
-        <div class="mt-6 grid gap-5 md:grid-cols-4">
+        <div class="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
             @foreach ($bestSellers as $product)
                 <x-storefront.product-card :product="$product" />
             @endforeach
@@ -104,7 +104,7 @@
 
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Fresh Weaves, Just for You" subtitle="New designs. Fresh colors. Ready to fall in love." />
-        <div class="mt-6 grid gap-5 md:grid-cols-4">
+        <div class="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
             @foreach ($newArrivals as $product)
                 <x-storefront.product-card :product="$product" />
             @endforeach
@@ -113,9 +113,9 @@
 
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Curated Collections for Every Occasion" subtitle="Handpicked selections just for you." />
-        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        <div class="mt-6 flex snap-x gap-4 overflow-x-auto pb-3 lg:grid lg:grid-cols-6 lg:overflow-visible lg:pb-0">
             @foreach ($collections as $collection)
-                <a href="{{ route('collections.show', $collection) }}" class="group relative min-h-40 overflow-hidden rounded-lg border border-[#ead8ba] bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                <a href="{{ route('collections.show', $collection) }}" class="group relative min-h-40 min-w-[calc(50%-0.5rem)] snap-start overflow-hidden rounded-lg border border-[#ead8ba] bg-white p-3 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:min-w-64 sm:p-4 lg:min-w-0">
                     <img src="{{ $collectionImages[$collection->name] ?? $collection->banner_url }}" alt="{{ $collection->name }}" class="absolute inset-0 h-full w-full object-cover opacity-55 transition group-hover:scale-105">
                     <div class="absolute inset-0 bg-gradient-to-br from-white via-white/70 to-transparent"></div>
                     <div class="relative">
@@ -130,7 +130,7 @@
 
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="More from Sunnah Sharee Ghar" subtitle="Secondary boutique essentials selected to complement your sharee shopping." />
-        <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div class="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             @foreach ($essentials as $essential)
                 <article class="group overflow-hidden rounded-lg border border-[#ead8ba] bg-[#fffdf8] shadow-[0_10px_28px_rgba(89,61,48,0.08)] transition hover:-translate-y-1 hover:border-[#c9a24a]">
                     <a href="{{ route('products.index', ['category' => $essential['slug']]) }}" class="block">
@@ -138,9 +138,9 @@
                             <img src="{{ $essential['image'] }}" alt="{{ $essential['name'] }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
                             <span class="absolute left-3 top-3 rounded-full border border-[#f1d88a]/70 bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-[#8a155b]">Essentials</span>
                         </div>
-                        <div class="p-5">
-                            <h3 class="font-serif text-xl font-bold text-[#2f241f]">{{ $essential['name'] }}</h3>
-                            <p class="mt-2 min-h-10 text-sm leading-5 text-[#6f5a50]">{{ $essential['subtitle'] }}</p>
+                        <div class="p-3 sm:p-5">
+                            <h3 class="font-serif text-lg font-bold text-[#2f241f] sm:text-xl">{{ $essential['name'] }}</h3>
+                            <p class="mt-2 min-h-10 text-xs leading-5 text-[#6f5a50] sm:text-sm">{{ $essential['subtitle'] }}</p>
                             <span class="mt-4 inline-flex rounded-lg bg-[#8a155b] px-4 py-2 text-xs font-bold text-white transition group-hover:bg-[#6f1047]">Explore</span>
                         </div>
                     </a>

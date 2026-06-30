@@ -2,8 +2,15 @@
     $showCategoryFilter = $showCategoryFilter ?? true;
 @endphp
 
-<div class="mt-8 grid gap-6 lg:grid-cols-[280px_1fr]">
-    <form class="rounded-lg border border-[#eadcc3] bg-white/90 p-4 shadow-sm backdrop-blur">
+<div class="mt-8 grid min-w-0 gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+    <div class="lg:hidden">
+        <button type="button" class="flex w-full items-center justify-between rounded-lg border border-[#d8b879] bg-white px-4 py-3 text-sm font-bold text-[#7a1f55] shadow-sm" data-filter-toggle aria-expanded="false">
+            <span>Show Filters</span>
+            <span aria-hidden="true">▾</span>
+        </button>
+    </div>
+
+    <form class="hidden min-w-0 rounded-lg border border-[#eadcc3] bg-white/90 p-4 shadow-sm backdrop-blur lg:block" data-filter-panel>
         <div class="grid gap-4">
             @if ($showCategoryFilter)
                 <x-admin.field label="Category">
@@ -56,8 +63,8 @@
         </div>
     </form>
 
-    <div>
-        <div class="grid gap-5 md:grid-cols-3">
+    <div class="min-w-0">
+        <div class="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
             @forelse ($products as $product)
                 <x-storefront.product-card :product="$product" />
             @empty
@@ -69,6 +76,22 @@
 </div>
 
 <script>
+    document.querySelectorAll('[data-filter-toggle]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const wrapper = button.closest('.grid');
+            const panel = wrapper?.querySelector('[data-filter-panel]');
+            const isOpen = panel && !panel.classList.contains('hidden');
+            const label = button.querySelector('span:first-child');
+
+            panel?.classList.toggle('hidden', isOpen);
+            button.setAttribute('aria-expanded', String(!isOpen));
+
+            if (label) {
+                label.textContent = isOpen ? 'Show Filters' : 'Hide Filters';
+            }
+        });
+    });
+
     document.querySelectorAll('[data-category-filter]').forEach((select) => {
         select.addEventListener('change', () => {
             select.form?.querySelectorAll('[data-attribute-filter]').forEach((filter) => {
