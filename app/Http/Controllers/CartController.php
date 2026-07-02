@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Support\CartPricing;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,7 @@ class CartController extends Controller
         ]);
     }
 
-    public function store(Request $request, Product $product): RedirectResponse
+    public function store(Request $request, Product $product): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
             'product_variant_id' => ['nullable', 'exists:product_variants,id'],
@@ -44,6 +45,14 @@ class CartController extends Controller
 
         $item->quantity = $item->exists ? $item->quantity + (int) $validated['quantity'] : (int) $validated['quantity'];
         $item->save();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Product added to cart.',
+                'added_quantity' => (int) $validated['quantity'],
+                'cart_count' => $this->cartItemCount($cart),
+            ]);
+        }
 
         return to_route('cart.index')->with('status', 'Product added to cart.');
     }
@@ -112,5 +121,10 @@ class CartController extends Controller
             'user_id' => $request->user()?->id,
             'session_id' => $request->session()->get('cart_session_id'),
         ]);
+    }
+
+    private function cartItemCount(Cart $cart): int
+    {
+        return (int) $cart->items()->sum('quantity');
     }
 }

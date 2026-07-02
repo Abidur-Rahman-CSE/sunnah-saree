@@ -31,10 +31,10 @@
         </div>
         <div class="grid gap-2 border-t border-[#f0e5d1] pt-3 sm:grid-cols-[1fr_auto]">
             <a href="{{ route('products.show', $product) }}" class="rounded-lg px-3 py-2 text-center text-xs font-bold text-[#8a155b]">Quick View</a>
-            <form action="{{ route('cart.store', $product) }}" method="POST">
+            <form action="{{ route('cart.store', $product) }}" method="POST" data-add-to-cart-form>
                 @csrf
                 <input type="hidden" name="quantity" value="1">
-                <button class="w-full rounded-lg bg-[#8a155b] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#6f1047]">Add</button>
+                <button class="w-full rounded-lg bg-[#8a155b] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#6f1047]" data-add-to-cart-submit>Add</button>
             </form>
         </div>
     </div>

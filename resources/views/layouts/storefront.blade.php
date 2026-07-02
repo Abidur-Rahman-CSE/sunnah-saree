@@ -9,12 +9,28 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="overflow-x-hidden bg-[#fffaf4] text-[#2f241f] antialiased">
+    @php
+        $cartCount = 0;
+        $cartSessionId = session('cart_session_id');
+        $cartQuery = \App\Models\Cart::query()->withSum('items', 'quantity');
+
+        if (auth()->check()) {
+            $cartQuery->where('user_id', auth()->id());
+        } elseif ($cartSessionId) {
+            $cartQuery->where('session_id', $cartSessionId);
+        } else {
+            $cartQuery = null;
+        }
+
+        $cartCount = $cartQuery ? (int) ($cartQuery->first()?->items_sum_quantity ?? 0) : 0;
+    @endphp
+
     <div class="bg-[#8a155b] px-4 py-2 text-center text-xs font-semibold leading-5 tracking-wide text-white md:text-sm">
         Free delivery over ৳5,000 <span class="mx-2 text-[#f1d88a]">•</span> Cash on delivery available <span class="mx-2 text-[#f1d88a]">•</span> Easy return support
     </div>
 
     <header class="sticky top-0 z-40 border-b border-[#ead8ba] bg-[#fffaf4]/95 shadow-[0_10px_30px_rgba(122,31,85,0.06)] backdrop-blur">
-        <div class="mx-auto grid max-w-7xl min-w-0 grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 lg:grid-cols-[220px_minmax(0,1fr)_320px] lg:gap-4 lg:py-4 xl:grid-cols-[260px_minmax(0,1fr)_360px]">
+        <div class="mx-auto grid max-w-7xl min-w-0 grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2 px-4 py-3 sm:gap-3 lg:grid-cols-[220px_minmax(0,1fr)_320px] lg:gap-4 lg:py-4 xl:grid-cols-[260px_minmax(0,1fr)_360px]">
             <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-3">
                 <img src="{{ asset('images/Logo/sunnah_logo_bgr.png') }}" alt="Sunnah Sharee Ghar" class="h-11 w-auto object-contain sm:h-14 lg:h-20">
             </a>
@@ -25,6 +41,11 @@
                     <span class="hidden sm:inline">Search</span>
                 </button>
             </form>
+            <a href="{{ route('cart.index') }}" class="relative grid h-10 w-10 place-items-center rounded-lg border border-[#dfcda9] bg-white text-[#7a1f55] shadow-sm lg:hidden" data-cart-target>
+                <span class="sr-only">Cart</span>
+                <x-storefront.icon name="shopping-bag" class="h-5 w-5" />
+                <span class="{{ $cartCount > 0 ? '' : 'hidden' }} absolute -right-2 -top-2 min-w-5 rounded-full bg-[#c9a24a] px-1.5 py-0.5 text-center text-[10px] font-bold leading-none text-white shadow" data-cart-count>{{ $cartCount }}</span>
+            </a>
             <button type="button" class="grid h-10 w-10 place-items-center rounded-lg border border-[#dfcda9] bg-white text-[#7a1f55] shadow-sm lg:hidden" data-mobile-menu-toggle aria-expanded="false" aria-controls="mobile-storefront-menu">
                 <span class="sr-only">Open menu</span>
                 <x-storefront.icon name="bars" class="h-5 w-5" />
@@ -34,7 +55,13 @@
                 <a href="{{ route('combos.index') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="gift" class="h-5 w-5" />Combos</a>
                 <a href="{{ auth()->check() ? route('account.wishlist.index') : route('login') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="heart" class="h-5 w-5" />Wishlist</a>
                 <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="user" class="h-5 w-5" />Account</a>
-                <a href="{{ route('cart.index') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 text-[#8a155b] transition hover:bg-white"><x-storefront.icon name="shopping-bag" class="h-5 w-5" />Cart</a>
+                <a href="{{ route('cart.index') }}" class="relative grid justify-items-center gap-1 rounded-lg px-2 py-2 text-[#8a155b] transition hover:bg-white" data-cart-target>
+                    <span class="relative">
+                        <x-storefront.icon name="shopping-bag" class="h-5 w-5" />
+                        <span class="{{ $cartCount > 0 ? '' : 'hidden' }} absolute -right-3 -top-2 min-w-5 rounded-full bg-[#c9a24a] px-1.5 py-0.5 text-center text-[10px] font-bold leading-none text-white shadow" data-cart-count>{{ $cartCount }}</span>
+                    </span>
+                    Cart
+                </a>
             </nav>
         </div>
         <nav class="mx-auto hidden max-w-7xl snap-x gap-3 overflow-x-auto px-4 pb-4 text-xs font-semibold uppercase tracking-wide text-[#5a463c] sm:gap-6 lg:flex">
@@ -55,7 +82,13 @@
                 <a href="{{ route('combos.index') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="gift" class="h-4 w-4" />Combos</a>
                 <a href="{{ auth()->check() ? route('account.wishlist.index') : route('login') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="heart" class="h-4 w-4" />Wishlist</a>
                 <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="user" class="h-4 w-4" />Account</a>
-                <a href="{{ route('cart.index') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center text-[#8a155b]"><x-storefront.icon name="shopping-bag" class="h-4 w-4" />Cart</a>
+                <a href="{{ route('cart.index') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center text-[#8a155b]">
+                    <span class="relative">
+                        <x-storefront.icon name="shopping-bag" class="h-4 w-4" />
+                        <span class="{{ $cartCount > 0 ? '' : 'hidden' }} absolute -right-3 -top-2 min-w-5 rounded-full bg-[#c9a24a] px-1.5 py-0.5 text-center text-[10px] font-bold leading-none text-white shadow" data-cart-count>{{ $cartCount }}</span>
+                    </span>
+                    Cart
+                </a>
                 <a href="{{ route('pages.show', 'contact-us') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="phone" class="h-4 w-4" />Contact</a>
             </div>
             <div class="mt-3 grid grid-cols-2 gap-2 text-xs font-bold uppercase tracking-wide text-[#5a463c]">
@@ -120,6 +153,94 @@
 
                 menu?.classList.toggle('hidden', isOpen);
                 button.setAttribute('aria-expanded', String(!isOpen));
+            });
+        });
+
+        const updateCartCount = (count) => {
+            document.querySelectorAll('[data-cart-count]').forEach((badge) => {
+                badge.textContent = count;
+                badge.classList.toggle('hidden', Number(count) <= 0);
+            });
+        };
+
+        const visibleCartTarget = () => [...document.querySelectorAll('[data-cart-target]')]
+            .find((target) => {
+                const rect = target.getBoundingClientRect();
+
+                return rect.width > 0 && rect.height > 0;
+            });
+
+        const animateCartPill = (source, quantity) => {
+            const target = visibleCartTarget();
+
+            if (! source || ! target) {
+                return;
+            }
+
+            const sourceRect = source.getBoundingClientRect();
+            const targetRect = target.getBoundingClientRect();
+            const pill = document.createElement('span');
+
+            pill.textContent = `+${quantity}`;
+            pill.className = 'pointer-events-none fixed z-[100] grid h-7 min-w-7 place-items-center rounded-full bg-[#c9a24a] px-2 text-xs font-bold text-white shadow-lg transition-all duration-700 ease-out';
+            pill.style.left = `${sourceRect.left + sourceRect.width / 2 - 14}px`;
+            pill.style.top = `${sourceRect.top + sourceRect.height / 2 - 14}px`;
+
+            document.body.appendChild(pill);
+
+            requestAnimationFrame(() => {
+                pill.style.transform = `translate(${targetRect.left + targetRect.width / 2 - sourceRect.left - sourceRect.width / 2}px, ${targetRect.top + targetRect.height / 2 - sourceRect.top - sourceRect.height / 2}px) scale(0.45)`;
+                pill.style.opacity = '0.25';
+            });
+
+            window.setTimeout(() => {
+                pill.remove();
+                target.classList.add('scale-110');
+                window.setTimeout(() => target.classList.remove('scale-110'), 180);
+            }, 720);
+        };
+
+        document.querySelectorAll('[data-add-to-cart-form]').forEach((form) => {
+            form.addEventListener('submit', async (event) => {
+                if (! event.submitter?.hasAttribute('data-add-to-cart-submit')) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                const submitter = event.submitter;
+                const originalText = submitter.textContent;
+                const formData = new FormData(form);
+
+                submitter.disabled = true;
+                submitter.textContent = 'Adding...';
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: formData,
+                    });
+
+                    if (! response.ok) {
+                        throw new Error('Cart request failed.');
+                    }
+
+                    const payload = await response.json();
+
+                    updateCartCount(payload.cart_count);
+                    animateCartPill(submitter, payload.added_quantity || formData.get('quantity') || 1);
+                    submitter.textContent = 'Added';
+                    window.setTimeout(() => {
+                        submitter.textContent = originalText;
+                        submitter.disabled = false;
+                    }, 900);
+                } catch (error) {
+                    form.submit();
+                }
             });
         });
     </script>

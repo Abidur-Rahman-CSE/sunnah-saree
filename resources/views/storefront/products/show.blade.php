@@ -27,7 +27,7 @@
             </div>
             <p class="mt-3 text-sm font-semibold text-green-700">{{ $product->variants->sum('quantity') > 0 ? 'In stock' : 'Out of stock' }}</p>
 
-            <form action="{{ route('cart.store', $product) }}" method="POST" class="mt-6 space-y-4">
+            <form action="{{ route('cart.store', $product) }}" method="POST" class="mt-6 space-y-4" data-add-to-cart-form>
                 @csrf
                 <x-admin.field label="Variant">
                     <select name="product_variant_id" class="w-full min-w-0 rounded-lg border border-[#dfcda9] bg-white px-4 py-3">
@@ -38,7 +38,7 @@
                 </x-admin.field>
                 <x-admin.field label="Quantity" class="max-w-32"><input type="number" name="quantity" value="1" min="1" class="w-full rounded-lg border border-[#dfcda9] px-4 py-3"></x-admin.field>
                 <div class="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
-                    <button class="rounded-lg bg-[#7a1f55] px-4 py-3 font-semibold text-white sm:px-6">Add to Cart</button>
+                    <button class="rounded-lg bg-[#7a1f55] px-4 py-3 font-semibold text-white sm:px-6" data-add-to-cart-submit>Add to Cart</button>
                     <button formaction="{{ route('cart.store', $product) }}" class="rounded-lg bg-[#c9a24a] px-4 py-3 font-semibold text-white sm:px-6">Buy Now</button>
                     @auth
                         @php($isWishlisted = auth()->user()->wishlists()->where('product_id', $product->id)->exists())

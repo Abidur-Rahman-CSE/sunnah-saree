@@ -44,6 +44,34 @@ test('customer can browse products and place a cash on delivery order', function
     ]);
 });
 
+test('add to cart can update the navbar count without leaving the page', function () {
+    $this->seed();
+
+    $product = Product::query()->with('variants')->firstOrFail();
+
+    $this->get(route('products.show', $product))
+        ->assertOk()
+        ->assertSee('data-add-to-cart-form', false)
+        ->assertSee('data-cart-count', false)
+        ->assertSee('data-cart-target', false);
+
+    $this->postJson(route('cart.store', $product), [
+        'product_variant_id' => $product->variants->first()->id,
+        'quantity' => 2,
+    ])
+        ->assertOk()
+        ->assertJson([
+            'message' => 'Product added to cart.',
+            'added_quantity' => 2,
+            'cart_count' => 2,
+        ]);
+
+    $this->assertDatabaseHas('cart_items', [
+        'product_id' => $product->id,
+        'quantity' => 2,
+    ]);
+});
+
 test('admin can access the dashboard', function () {
     $this->seed();
 
