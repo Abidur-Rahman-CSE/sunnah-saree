@@ -159,7 +159,7 @@ test('admin can upload multiple product images and storefront shows gallery', fu
     Storage::disk('public')->assertExists($storedPath);
 
     $this->actingAs($admin)
-        ->delete(route('admin.products.images.destroy', [$product, $image]))
+        ->delete(route('admin.product-images.destroy', $image))
         ->assertRedirect(route('admin.products.edit', $product));
 
     Storage::disk('public')->assertMissing($storedPath);

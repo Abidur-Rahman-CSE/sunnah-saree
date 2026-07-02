@@ -93,7 +93,7 @@
     </form>
 
     @foreach ($product->images as $image)
-        <form id="delete-product-image-{{ $image->id }}" action="{{ route('admin.products.images.destroy', [$product, $image]) }}" method="POST" class="hidden">
+        <form id="delete-product-image-{{ $image->id }}" action="{{ route('admin.product-images.destroy', $image) }}" method="POST" class="hidden">
             @csrf
             @method('DELETE')
         </form>

@@ -66,8 +66,8 @@ Route::middleware('auth')->group(function (): void {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/', DashboardController::class)->name('dashboard');
     Route::resource('categories', CategoryController::class);
+    Route::delete('product-images/{image}', [ProductController::class, 'destroyImage'])->name('product-images.destroy');
     Route::resource('products', ProductController::class);
-    Route::delete('products/{product}/images/{image}', [ProductController::class, 'destroyImage'])->name('products.images.destroy');
     Route::post('products/{product}/duplicate', [ProductController::class, 'duplicate'])->name('products.duplicate');
     Route::resource('fashion-attributes', FashionAttributeController::class);
     Route::resource('collections', CollectionController::class);

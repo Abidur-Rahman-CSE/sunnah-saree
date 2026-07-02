@@ -133,9 +133,9 @@ class ProductController extends Controller
         return to_route('admin.products.edit', $copy)->with('status', 'Product duplicated. Review and activate when ready.');
     }
 
-    public function destroyImage(Product $product, ProductImage $image): RedirectResponse
+    public function destroyImage(ProductImage $image): RedirectResponse
     {
-        abort_unless($image->product_id === $product->id, 404);
+        $product = $image->product;
 
         app(AdminImage::class)->deleteUrl($image->image_url);
         $image->delete();
