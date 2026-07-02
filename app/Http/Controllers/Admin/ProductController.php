@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Collection;
 use App\Models\FashionAttribute;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Support\AdminImage;
 use Illuminate\Contracts\View\View;
@@ -130,6 +131,16 @@ class ProductController extends Controller
         }
 
         return to_route('admin.products.edit', $copy)->with('status', 'Product duplicated. Review and activate when ready.');
+    }
+
+    public function destroyImage(Product $product, ProductImage $image): RedirectResponse
+    {
+        abort_unless($image->product_id === $product->id, 404);
+
+        app(AdminImage::class)->deleteUrl($image->image_url);
+        $image->delete();
+
+        return to_route('admin.products.edit', $product)->with('status', 'Product image deleted.');
     }
 
     /**

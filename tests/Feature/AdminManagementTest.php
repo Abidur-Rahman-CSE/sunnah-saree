@@ -153,6 +153,22 @@ test('admin can upload multiple product images and storefront shows gallery', fu
     expect($product->images)->toHaveCount(3)
         ->and($product->images->pluck('image_url')->every(fn (string $imageUrl): bool => str_starts_with($imageUrl, '/storage/products/')))->toBeTrue();
 
+    $image = $product->images->first();
+    $storedPath = str_replace('/storage/', '', $image->image_url);
+
+    Storage::disk('public')->assertExists($storedPath);
+
+    $this->actingAs($admin)
+        ->delete(route('admin.products.images.destroy', [$product, $image]))
+        ->assertRedirect(route('admin.products.edit', $product));
+
+    Storage::disk('public')->assertMissing($storedPath);
+    $this->assertDatabaseMissing('product_images', ['id' => $image->id]);
+
+    $product->refresh()->load('images');
+
+    expect($product->images)->toHaveCount(2);
+
     $this->actingAs($admin)
         ->get(route('admin.products.index'))
         ->assertOk()

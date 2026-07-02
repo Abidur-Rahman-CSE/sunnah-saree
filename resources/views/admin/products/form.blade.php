@@ -47,7 +47,12 @@
                         <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#8a155b]">Current images</p>
                         <div class="mt-2 grid grid-cols-4 gap-2 md:grid-cols-8">
                             @foreach ($product->images as $image)
-                                <img src="{{ $image->image_url }}" alt="{{ $image->alt_text ?: $product->name }}" class="aspect-square rounded-lg border border-[#eadcc3] object-cover">
+                                <div class="overflow-hidden rounded-lg border border-[#eadcc3] bg-white">
+                                    <img src="{{ $image->image_url }}" alt="{{ $image->alt_text ?: $product->name }}" class="aspect-square w-full object-cover">
+                                    <button type="submit" form="delete-product-image-{{ $image->id }}" class="w-full bg-red-50 px-2 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100">
+                                        Delete
+                                    </button>
+                                </div>
                             @endforeach
                         </div>
                     </div>
@@ -86,4 +91,11 @@
             <button class="rounded-lg bg-[#7a1f55] px-4 py-3 font-semibold text-white md:col-span-2">Save Product</button>
         </div>
     </form>
+
+    @foreach ($product->images as $image)
+        <form id="delete-product-image-{{ $image->id }}" action="{{ route('admin.products.images.destroy', [$product, $image]) }}" method="POST" class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endforeach
 @endsection
