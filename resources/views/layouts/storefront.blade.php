@@ -7,6 +7,26 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700|playfair-display:600,700" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        @keyframes cart-reminder-shake {
+            0%, 88%, 100% { transform: rotate(0deg) scale(1); }
+            90% { transform: rotate(-8deg) scale(1.04); }
+            92% { transform: rotate(7deg) scale(1.04); }
+            94% { transform: rotate(-5deg) scale(1.03); }
+            96% { transform: rotate(4deg) scale(1.02); }
+        }
+
+        .cart-has-items {
+            animation: cart-reminder-shake 4.5s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cart-has-items {
+                animation: none;
+            }
+        }
+    </style>
 </head>
 <body class="overflow-x-hidden bg-[#fffaf4] text-[#2f241f] antialiased">
     @php
@@ -41,7 +61,7 @@
                     <span class="hidden sm:inline">Search</span>
                 </button>
             </form>
-            <a href="{{ route('cart.index') }}" class="relative grid h-10 w-10 place-items-center rounded-lg border border-[#dfcda9] bg-white text-[#7a1f55] shadow-sm lg:hidden" data-cart-target>
+            <a href="{{ route('cart.index') }}" class="{{ $cartCount > 0 ? 'cart-has-items' : '' }} relative grid h-10 w-10 place-items-center rounded-lg border border-[#dfcda9] bg-white text-[#7a1f55] shadow-sm lg:hidden" data-cart-target>
                 <span class="sr-only">Cart</span>
                 <x-storefront.icon name="shopping-bag" class="h-5 w-5" />
                 <span class="{{ $cartCount > 0 ? '' : 'hidden' }} absolute -right-2 -top-2 min-w-5 rounded-full bg-[#c9a24a] px-1.5 py-0.5 text-center text-[10px] font-bold leading-none text-white shadow" data-cart-count>{{ $cartCount }}</span>
@@ -55,7 +75,7 @@
                 <a href="{{ route('combos.index') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="gift" class="h-5 w-5" />Combos</a>
                 <a href="{{ auth()->check() ? route('account.wishlist.index') : route('login') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="heart" class="h-5 w-5" />Wishlist</a>
                 <a href="{{ auth()->check() ? route('account.dashboard') : route('login') }}" class="grid justify-items-center gap-1 rounded-lg px-2 py-2 transition hover:bg-white hover:text-[#8a155b]"><x-storefront.icon name="user" class="h-5 w-5" />Account</a>
-                <a href="{{ route('cart.index') }}" class="relative grid justify-items-center gap-1 rounded-lg px-2 py-2 text-[#8a155b] transition hover:bg-white" data-cart-target>
+                <a href="{{ route('cart.index') }}" class="{{ $cartCount > 0 ? 'cart-has-items' : '' }} relative grid justify-items-center gap-1 rounded-lg px-2 py-2 text-[#8a155b] transition hover:bg-white" data-cart-target>
                     <span class="relative">
                         <x-storefront.icon name="shopping-bag" class="h-5 w-5" />
                         <span class="{{ $cartCount > 0 ? '' : 'hidden' }} absolute -right-3 -top-2 min-w-5 rounded-full bg-[#c9a24a] px-1.5 py-0.5 text-center text-[10px] font-bold leading-none text-white shadow" data-cart-count>{{ $cartCount }}</span>
@@ -157,9 +177,15 @@
         });
 
         const updateCartCount = (count) => {
+            const hasItems = Number(count) > 0;
+
             document.querySelectorAll('[data-cart-count]').forEach((badge) => {
                 badge.textContent = count;
-                badge.classList.toggle('hidden', Number(count) <= 0);
+                badge.classList.toggle('hidden', ! hasItems);
+            });
+
+            document.querySelectorAll('[data-cart-target]').forEach((target) => {
+                target.classList.toggle('cart-has-items', hasItems);
             });
         };
 
