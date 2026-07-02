@@ -115,6 +115,15 @@ test('admin can upload category image and print invoice', function () {
     $order = Order::query()->where('customer_phone', '+8801700000011')->firstOrFail();
 
     $this->actingAs($admin)
+        ->get(route('admin.orders.show', $order))
+        ->assertOk()
+        ->assertSee('Customer Info')
+        ->assertSee('Invoice Customer')
+        ->assertSee('+8801700000011')
+        ->assertSee('invoice@example.com')
+        ->assertSee('Dhaka');
+
+    $this->actingAs($admin)
         ->get(route('admin.orders.invoice', $order))
         ->assertOk()
         ->assertSee($order->order_number)

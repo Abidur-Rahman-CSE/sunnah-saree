@@ -5,12 +5,40 @@
         <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" class="rounded-lg border border-[#7a1f55] px-4 py-2 font-semibold text-[#7a1f55]">Print Invoice</a>
     </div>
     <div class="grid gap-6 lg:grid-cols-[1fr_360px]">
-        <div class="rounded-lg border border-[#e5ded0] bg-white p-6 shadow-sm">
-            <h2 class="font-bold">Items</h2>
-            <table class="mt-4 w-full text-left text-sm">
-                <thead><tr class="border-b"><th class="py-3">Product</th><th>Variant</th><th>Qty</th><th>Total</th></tr></thead>
-                <tbody>@foreach ($order->items as $item)<tr class="border-b"><td class="py-3">{{ $item->product_name }}</td><td>{{ $item->variant_name }}</td><td>{{ $item->quantity }}</td><td>৳{{ number_format((float) $item->total) }}</td></tr>@endforeach</tbody>
-            </table>
+        <div class="grid gap-6">
+            <div class="rounded-lg border border-[#e5ded0] bg-white p-6 shadow-sm">
+                <h2 class="font-bold">Customer Info</h2>
+                <div class="mt-4 grid gap-4 text-sm md:grid-cols-2">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wide text-[#8d786d]">Name</p>
+                        <p class="mt-1 font-semibold">{{ $order->customer_name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wide text-[#8d786d]">Phone</p>
+                        <p class="mt-1 font-semibold">{{ $order->customer_phone }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wide text-[#8d786d]">Email</p>
+                        <p class="mt-1 font-semibold">{{ $order->customer_email ?: 'Not provided' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wide text-[#8d786d]">Account</p>
+                        <p class="mt-1 font-semibold">{{ $order->user?->email ?: 'Guest checkout' }}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="text-xs font-bold uppercase tracking-wide text-[#8d786d]">Shipping Address</p>
+                        <p class="mt-1 font-semibold">{{ $order->shipping_address }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-lg border border-[#e5ded0] bg-white p-6 shadow-sm">
+                <h2 class="font-bold">Items</h2>
+                <table class="mt-4 w-full text-left text-sm">
+                    <thead><tr class="border-b"><th class="py-3">Product</th><th>Variant</th><th>Qty</th><th>Total</th></tr></thead>
+                    <tbody>@foreach ($order->items as $item)<tr class="border-b"><td class="py-3">{{ $item->product_name }}</td><td>{{ $item->variant_name }}</td><td>{{ $item->quantity }}</td><td>৳{{ number_format((float) $item->total) }}</td></tr>@endforeach</tbody>
+                </table>
+            </div>
         </div>
         <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="h-fit rounded-lg border border-[#e5ded0] bg-white p-6 shadow-sm">
             @csrf @method('PATCH')
