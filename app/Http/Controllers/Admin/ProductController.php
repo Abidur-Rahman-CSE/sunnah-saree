@@ -90,7 +90,7 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product): RedirectResponse
     {
-        $product->update($this->payload($request));
+        $product->update($this->payload($request, $product));
         $this->syncExtras($request, $product);
 
         return to_route('admin.products.index')->with('status', 'Product updated.');
@@ -146,13 +146,16 @@ class ProductController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function payload(ProductRequest $request): array
+    private function payload(ProductRequest $request, ?Product $product = null): array
     {
         $validated = $request->validated();
+        $slugSource = $validated['slug'] ?? $validated['name'];
+        $skuSource = $validated['sku'] ?? $validated['name'];
 
         $payload = [
             ...Arr::except($validated, ['collection_ids', 'image_url', 'image_file', 'image_files', 'variant_color', 'variant_sku', 'variant_quantity']),
-            'slug' => ($validated['slug'] ?? null) ?: Str::slug($validated['name']),
+            'slug' => $this->uniqueSlug($slugSource, $product),
+            'sku' => $this->uniqueSku($skuSource, $product),
             'blouse_included' => $request->boolean('blouse_included'),
             'is_active' => $request->boolean('is_active'),
             'is_featured' => $request->boolean('is_featured'),
@@ -219,13 +222,16 @@ class ProductController extends Controller
             ->all();
     }
 
-    private function uniqueSlug(string $slug): string
+    private function uniqueSlug(string $slug, ?Product $ignore = null): string
     {
-        $base = Str::slug($slug);
+        $base = Str::slug($slug) ?: 'product';
         $candidate = $base;
         $counter = 2;
 
-        while (Product::query()->where('slug', $candidate)->exists()) {
+        while (Product::query()
+            ->where('slug', $candidate)
+            ->when($ignore, fn ($query) => $query->whereKeyNot($ignore->id))
+            ->exists()) {
             $candidate = $base.'-'.$counter;
             $counter++;
         }
@@ -233,13 +239,17 @@ class ProductController extends Controller
         return $candidate;
     }
 
-    private function uniqueSku(string $sku): string
+    private function uniqueSku(string $sku, ?Product $ignore = null): string
     {
-        $candidate = Str::upper($sku);
+        $base = Str::upper(Str::slug($sku, '-')) ?: 'PRODUCT';
+        $candidate = $base;
         $counter = 2;
 
-        while (Product::query()->where('sku', $candidate)->exists()) {
-            $candidate = Str::upper($sku).'-'.$counter;
+        while (Product::query()
+            ->where('sku', $candidate)
+            ->when($ignore, fn ($query) => $query->whereKeyNot($ignore->id))
+            ->exists()) {
+            $candidate = $base.'-'.$counter;
             $counter++;
         }
 

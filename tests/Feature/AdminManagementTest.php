@@ -190,6 +190,47 @@ test('admin can upload multiple product images and storefront shows gallery', fu
         ->assertSee('data-gallery-image', false);
 });
 
+test('admin product slug and sku are generated from name when left blank', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+    $category = Category::query()->firstOrFail();
+
+    $this->actingAs($admin)
+        ->post(route('admin.products.store'), [
+            'category_id' => $category->id,
+            'name' => 'Auto SKU Sharee',
+            'product_type' => 'fashion',
+            'price' => 3200,
+            'description' => 'A product with generated slug and sku.',
+            'is_active' => '1',
+        ])
+        ->assertRedirect(route('admin.products.index'));
+
+    $this->actingAs($admin)
+        ->post(route('admin.products.store'), [
+            'category_id' => $category->id,
+            'name' => 'Auto SKU Sharee',
+            'product_type' => 'fashion',
+            'price' => 3300,
+            'description' => 'Another product with generated slug and sku.',
+            'is_active' => '1',
+        ])
+        ->assertRedirect(route('admin.products.index'));
+
+    $this->assertDatabaseHas('products', [
+        'name' => 'Auto SKU Sharee',
+        'slug' => 'auto-sku-sharee',
+        'sku' => 'AUTO-SKU-SHAREE',
+    ]);
+
+    $this->assertDatabaseHas('products', [
+        'name' => 'Auto SKU Sharee',
+        'slug' => 'auto-sku-sharee-2',
+        'sku' => 'AUTO-SKU-SHAREE-2',
+    ]);
+});
+
 test('admin product selection forms render searchable picker modal', function () {
     $this->seed();
 

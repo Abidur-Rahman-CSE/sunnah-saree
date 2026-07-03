@@ -5,8 +5,8 @@
         @csrf
         @if ($product->exists) @method('PUT') @endif
         <div class="grid gap-4 md:grid-cols-2">
-            <x-admin.field label="Product name"><input name="name" value="{{ old('name', $product->name) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Product name"></x-admin.field>
-            <x-admin.field label="Slug"><input name="slug" value="{{ old('slug', $product->slug) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Slug"></x-admin.field>
+            <x-admin.field label="Product name"><input name="name" value="{{ old('name', $product->name) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Product name" data-product-name></x-admin.field>
+            <x-admin.field label="Slug"><input name="slug" value="{{ old('slug', $product->slug) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Auto generated from name" data-auto-slug></x-admin.field>
             <x-admin.field label="Category"><select name="category_id" class="rounded-lg border border-[#ddd4c4] px-4 py-3">@foreach ($categories as $category)<option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>{{ $category->name }}</option>@endforeach</select></x-admin.field>
             <x-admin.field label="Product type">
                 <select name="product_type" class="rounded-lg border border-[#ddd4c4] px-4 py-3" data-product-type>
@@ -16,7 +16,7 @@
             </x-admin.field>
             <x-admin.field label="Price"><input name="price" value="{{ old('price', $product->price) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Price"></x-admin.field>
             <x-admin.field label="Discount price"><input name="discount_price" value="{{ old('discount_price', $product->discount_price) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Discount price"></x-admin.field>
-            <x-admin.field label="SKU"><input name="sku" value="{{ old('sku', $product->sku) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="SKU"></x-admin.field>
+            <x-admin.field label="SKU"><input name="sku" value="{{ old('sku', $product->sku) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Auto generated from name" data-auto-sku></x-admin.field>
             <x-admin.field label="Badge"><input name="badge" value="{{ old('badge', $product->badge) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Badge"></x-admin.field>
             <x-admin.field label="Description" span><textarea name="description" rows="4" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Description">{{ old('description', $product->description) }}</textarea></x-admin.field>
             <div class="grid gap-4 rounded-lg border border-[#eadcc3] bg-[#fffaf3] p-4 md:col-span-2">

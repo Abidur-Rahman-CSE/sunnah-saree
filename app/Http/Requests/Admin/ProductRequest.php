@@ -31,7 +31,7 @@ class ProductRequest extends FormRequest
             'product_type' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
             'discount_price' => ['nullable', 'numeric', 'min:0', 'lt:price'],
-            'sku' => ['required', 'string', 'max:255'],
+            'sku' => ['nullable', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'badge' => ['nullable', 'string', 'max:255'],
             'sharee_type' => ['nullable', 'string', 'max:255'],

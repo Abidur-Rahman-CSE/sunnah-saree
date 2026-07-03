@@ -164,6 +164,39 @@
             syncProductType();
         });
 
+        document.querySelectorAll('[data-product-name]').forEach((nameInput) => {
+            const form = nameInput.closest('form');
+            const slugInput = form?.querySelector('[data-auto-slug]');
+            const skuInput = form?.querySelector('[data-auto-sku]');
+            let slugTouched = Boolean(slugInput?.value);
+            let skuTouched = Boolean(skuInput?.value);
+            const slugify = (value) => value
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+
+            slugInput?.addEventListener('input', () => {
+                slugTouched = Boolean(slugInput.value);
+            });
+
+            skuInput?.addEventListener('input', () => {
+                skuTouched = Boolean(skuInput.value);
+            });
+
+            nameInput.addEventListener('input', () => {
+                const slug = slugify(nameInput.value);
+
+                if (slugInput && ! slugTouched) {
+                    slugInput.value = slug;
+                }
+
+                if (skuInput && ! skuTouched) {
+                    skuInput.value = slug.toUpperCase();
+                }
+            });
+        });
+
         document.querySelectorAll('[data-attribute-key]').forEach((select) => {
             const form = select.closest('form');
             const textValues = form?.querySelector('[data-text-values]');
