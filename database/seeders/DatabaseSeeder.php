@@ -114,6 +114,7 @@ class DatabaseSeeder extends Seeder
                     'price' => $price,
                     'discount_price' => $discount,
                     'sku' => Str::upper(Str::slug($name, '-')),
+                    'quantity' => 8,
                     'description' => 'A premium boutique piece selected for graceful occasions, gift-ready presentation, and reliable everyday service.',
                     'badge' => $discount ? 'Offer' : 'New',
                     'sharee_type' => $shareeType,

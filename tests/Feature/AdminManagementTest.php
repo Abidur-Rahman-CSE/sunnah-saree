@@ -144,6 +144,8 @@ test('admin can upload multiple product images and storefront shows gallery', fu
             'product_type' => 'Sharee',
             'price' => 5500,
             'sku' => 'ADMIN-GALLERY-001',
+            'quantity' => 9,
+            'stock_alert_quantity' => 3,
             'description' => 'A product with multiple gallery images.',
             'image_file' => UploadedFile::fake()->image('primary.jpg'),
             'image_files' => [
@@ -202,6 +204,8 @@ test('admin product slug and sku are generated from name when left blank', funct
             'name' => 'Auto SKU Sharee',
             'product_type' => 'fashion',
             'price' => 3200,
+            'quantity' => 5,
+            'stock_alert_quantity' => 2,
             'description' => 'A product with generated slug and sku.',
             'is_active' => '1',
         ])
@@ -213,6 +217,8 @@ test('admin product slug and sku are generated from name when left blank', funct
             'name' => 'Auto SKU Sharee',
             'product_type' => 'fashion',
             'price' => 3300,
+            'quantity' => 6,
+            'stock_alert_quantity' => 2,
             'description' => 'Another product with generated slug and sku.',
             'is_active' => '1',
         ])
@@ -229,6 +235,58 @@ test('admin product slug and sku are generated from name when left blank', funct
         'slug' => 'auto-sku-sharee-2',
         'sku' => 'AUTO-SKU-SHAREE-2',
     ]);
+});
+
+test('admin can link separate products as storefront product variants', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+    $product = Product::query()->whereNotNull('color')->firstOrFail();
+    $variantProduct = Product::query()
+        ->whereKeyNot($product->id)
+        ->where('category_id', $product->category_id)
+        ->firstOrFail();
+
+    $this->actingAs($admin)
+        ->put(route('admin.products.update', $product), [
+            'category_id' => $product->category_id,
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'product_type' => $product->product_type,
+            'price' => $product->price,
+            'discount_price' => $product->discount_price,
+            'sku' => $product->sku,
+            'quantity' => $product->quantity,
+            'stock_alert_quantity' => $product->stock_alert_quantity,
+            'description' => $product->description,
+            'sharee_type' => $product->sharee_type,
+            'fabric' => $product->fabric,
+            'work_type' => $product->work_type,
+            'color' => $product->color,
+            'occasion' => $product->occasion,
+            'product_ids' => [$variantProduct->id],
+            'is_active' => '1',
+        ])
+        ->assertRedirect(route('admin.products.index'));
+
+    $this->assertDatabaseHas('product_variant_links', [
+        'product_id' => $product->id,
+        'variant_product_id' => $variantProduct->id,
+    ]);
+
+    $this->get(route('products.index'))
+        ->assertOk()
+        ->assertSee($product->name)
+        ->assertSee($variantProduct->name);
+
+    $this->get(route('products.show', $product))
+        ->assertOk()
+        ->assertSee('Product Variants')
+        ->assertSee(route('products.show', $variantProduct), false);
+
+    $this->get(route('products.show', $variantProduct))
+        ->assertOk()
+        ->assertSee(route('products.show', $product), false);
 });
 
 test('admin product selection forms render searchable picker modal', function () {

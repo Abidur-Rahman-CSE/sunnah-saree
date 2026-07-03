@@ -38,6 +38,14 @@ class CheckoutController extends Controller
             return to_route('cart.index')->with('status', 'Your cart is empty.');
         }
 
+        foreach ($cart->items as $item) {
+            if ($item->quantity > $item->product->quantity) {
+                return to_route('cart.index')->withErrors([
+                    'quantity' => 'Only '.$item->product->quantity.' '.$item->product->name.' items are available.',
+                ]);
+            }
+        }
+
         $order = DB::transaction(function () use ($request, $cart): Order {
             $summary = app(CartPricing::class)->summary($cart, $request);
 
@@ -63,9 +71,7 @@ class CheckoutController extends Controller
                     'total' => $item->lineTotal(),
                 ]);
 
-                if ($item->variant) {
-                    $item->variant->decrement('quantity', $item->quantity);
-                }
+                $item->product->decrement('quantity', $item->quantity);
             }
 
             Payment::query()->create([

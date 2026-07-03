@@ -25,18 +25,29 @@
                     <span class="text-lg text-[#8d786d] line-through">৳{{ number_format((float) $product->price) }}</span>
                 @endif
             </div>
-            <p class="mt-3 text-sm font-semibold text-green-700">{{ $product->variants->sum('quantity') > 0 ? 'In stock' : 'Out of stock' }}</p>
+            <p class="mt-3 text-sm font-semibold {{ $product->quantity > 0 ? 'text-green-700' : 'text-red-700' }}">{{ $product->quantity > 0 ? $product->quantity.' pcs in stock' : 'Out of stock' }}</p>
+
+            @if ($productVariants->isNotEmpty())
+                <div class="mt-6">
+                    <p class="text-sm font-bold text-[#2f241f]">Product Variants</p>
+                    <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        <span class="rounded-lg border-2 border-[#8a155b] bg-[#fff6e8] p-2 text-sm font-semibold text-[#7a1f55]">
+                            <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" class="aspect-square w-full rounded-md object-cover">
+                            <span class="mt-2 block truncate">{{ $product->color ?: $product->name }}</span>
+                        </span>
+                        @foreach ($productVariants as $variantProduct)
+                            <a href="{{ route('products.show', $variantProduct) }}" class="rounded-lg border border-[#eadcc3] bg-white p-2 text-sm font-semibold text-[#2f241f] transition hover:border-[#8a155b] hover:text-[#8a155b]">
+                                <img src="{{ $variantProduct->primaryImage() }}" alt="{{ $variantProduct->name }}" class="aspect-square w-full rounded-md object-cover">
+                                <span class="mt-2 block truncate">{{ $variantProduct->color ?: $variantProduct->name }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
 
             <form action="{{ route('cart.store', $product) }}" method="POST" class="mt-6 space-y-4" data-add-to-cart-form>
                 @csrf
-                <x-admin.field label="Variant">
-                    <select name="product_variant_id" class="w-full min-w-0 rounded-lg border border-[#dfcda9] bg-white px-4 py-3">
-                        @foreach ($product->variants as $variant)
-                            <option value="{{ $variant->id }}">{{ $variant->color }} · {{ $variant->quantity }} pcs</option>
-                        @endforeach
-                    </select>
-                </x-admin.field>
-                <x-admin.field label="Quantity" class="max-w-32"><input type="number" name="quantity" value="1" min="1" class="w-full rounded-lg border border-[#dfcda9] px-4 py-3"></x-admin.field>
+                <x-admin.field label="Quantity" class="max-w-32"><input type="number" name="quantity" value="1" min="1" max="{{ max(1, $product->quantity) }}" class="w-full rounded-lg border border-[#dfcda9] px-4 py-3"></x-admin.field>
                 <div class="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
                     <button class="rounded-lg bg-[#7a1f55] px-4 py-3 font-semibold text-white sm:px-6" data-add-to-cart-submit>Add to Cart</button>
                     <button formaction="{{ route('cart.store', $product) }}" class="rounded-lg bg-[#c9a24a] px-4 py-3 font-semibold text-white sm:px-6">Buy Now</button>

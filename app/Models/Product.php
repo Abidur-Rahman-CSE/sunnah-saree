@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'price',
     'discount_price',
     'sku',
+    'quantity',
     'description',
     'badge',
     'sharee_type',
@@ -40,6 +41,7 @@ class Product extends Model
         return [
             'price' => 'decimal:2',
             'discount_price' => 'decimal:2',
+            'quantity' => 'integer',
             'blouse_included' => 'boolean',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
@@ -71,6 +73,18 @@ class Product extends Model
     public function offers(): BelongsToMany
     {
         return $this->belongsToMany(Offer::class);
+    }
+
+    public function variantProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'product_variant_links', 'product_id', 'variant_product_id')
+            ->withTimestamps();
+    }
+
+    public function variantOfProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'product_variant_links', 'variant_product_id', 'product_id')
+            ->withTimestamps();
     }
 
     public function scopeActive(Builder $query): Builder

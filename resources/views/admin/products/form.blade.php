@@ -17,6 +17,8 @@
             <x-admin.field label="Price"><input name="price" value="{{ old('price', $product->price) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Price"></x-admin.field>
             <x-admin.field label="Discount price"><input name="discount_price" value="{{ old('discount_price', $product->discount_price) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Discount price"></x-admin.field>
             <x-admin.field label="SKU"><input name="sku" value="{{ old('sku', $product->sku) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Auto generated from name" data-auto-sku></x-admin.field>
+            <x-admin.field label="Stock quantity"><input type="number" min="0" name="quantity" value="{{ old('quantity', $product->quantity ?? 0) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Stock quantity"></x-admin.field>
+            <x-admin.field label="Stock alert quantity"><input type="number" min="0" name="stock_alert_quantity" value="{{ old('stock_alert_quantity', $product->stock_alert_quantity ?? 3) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Stock alert quantity"></x-admin.field>
             <x-admin.field label="Badge"><input name="badge" value="{{ old('badge', $product->badge) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Badge"></x-admin.field>
             <x-admin.field label="Description" span><textarea name="description" rows="4" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Description">{{ old('description', $product->description) }}</textarea></x-admin.field>
             <div class="grid gap-4 rounded-lg border border-[#eadcc3] bg-[#fffaf3] p-4 md:col-span-2">
@@ -77,9 +79,11 @@
                 <x-admin.field label="Care instruction" span><textarea name="care_instruction" rows="3" class="rounded-lg border border-[#ddd4c4] bg-white px-4 py-3" placeholder="Care instruction">{{ old('care_instruction', $product->care_instruction) }}</textarea></x-admin.field>
             </div>
             <x-admin.field label="Collections" span><select name="collection_ids[]" multiple class="rounded-lg border border-[#ddd4c4] px-4 py-3">@foreach ($collections as $collection)<option value="{{ $collection->id }}" @selected(in_array($collection->id, old('collection_ids', $product->collections->pluck('id')->all()), true))>{{ $collection->name }}</option>@endforeach</select></x-admin.field>
-            <x-admin.field label="Variant color"><input name="variant_color" value="{{ old('variant_color', $product->variants->first()?->color) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Variant color"></x-admin.field>
-            <x-admin.field label="Variant SKU"><input name="variant_sku" value="{{ old('variant_sku', $product->variants->first()?->sku) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Variant SKU"></x-admin.field>
-            <x-admin.field label="Variant quantity"><input name="variant_quantity" value="{{ old('variant_quantity', $product->variants->first()?->quantity) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Variant quantity"></x-admin.field>
+            <x-admin.product-picker
+                :products="$products"
+                :selected-ids="old('product_ids', $product->exists ? $product->variantProducts->pluck('id')->all() : [])"
+                title="Product Variants"
+            />
             <div class="grid gap-2 text-sm">
                 <label data-fashion-fields><input type="checkbox" name="blouse_included" value="1" @checked(old('blouse_included', $product->blouse_included))> Blouse included</label>
                 <label><input type="checkbox" name="is_active" value="1" @checked(old('is_active', $product->is_active ?? true))> Active</label>

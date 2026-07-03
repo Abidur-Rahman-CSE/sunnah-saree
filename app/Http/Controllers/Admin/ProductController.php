@@ -36,7 +36,7 @@ class ProductController extends Controller
 
         return view('admin.products.index', [
             'products' => $products->paginate(20)->withQueryString(),
-            'categories' => Category::query()->orderBy('name')->get(),
+            'categories' => Category::query()->orderBy('name', 'asc')->get(),
         ]);
     }
 
@@ -47,8 +47,9 @@ class ProductController extends Controller
     {
         return view('admin.products.form', [
             'product' => new Product,
-            'categories' => Category::query()->orderBy('name')->get(),
+            'categories' => Category::query()->orderBy('name', 'asc')->get(),
             'collections' => Collection::query()->orderBy('name')->get(),
+            'products' => Product::query()->with(['category', 'images'])->orderBy('name')->get(),
             'fashionOptions' => $this->fashionOptions(),
         ]);
     }
@@ -78,9 +79,10 @@ class ProductController extends Controller
     public function edit(Product $product): View
     {
         return view('admin.products.form', [
-            'product' => $product->load('collections', 'images', 'variants'),
-            'categories' => Category::query()->orderBy('name')->get(),
+            'product' => $product->load('collections', 'images', 'variants', 'variantProducts'),
+            'categories' => Category::query()->orderBy('name', 'asc')->get(),
             'collections' => Collection::query()->orderBy('name')->get(),
+            'products' => Product::query()->with(['category', 'images'])->whereKeyNot($product->id)->orderBy('name')->get(),
             'fashionOptions' => $this->fashionOptions(),
         ]);
     }
@@ -108,7 +110,7 @@ class ProductController extends Controller
 
     public function duplicate(Product $product): RedirectResponse
     {
-        $product->load('collections', 'images', 'variants');
+        $product->load('collections', 'images', 'variants', 'variantProducts');
 
         $copy = $product->replicate();
         $copy->name = $product->name.' Copy';
@@ -118,6 +120,7 @@ class ProductController extends Controller
         $copy->save();
 
         $copy->collections()->sync($product->collections->pluck('id'));
+        $copy->variantProducts()->sync($product->variantProducts->pluck('id'));
 
         foreach ($product->images as $image) {
             $copy->images()->create($image->only(['image_url', 'alt_text', 'sort_order']));
@@ -153,7 +156,7 @@ class ProductController extends Controller
         $skuSource = $validated['sku'] ?? $validated['name'];
 
         $payload = [
-            ...Arr::except($validated, ['collection_ids', 'image_url', 'image_file', 'image_files', 'variant_color', 'variant_sku', 'variant_quantity']),
+            ...Arr::except($validated, ['collection_ids', 'product_ids', 'image_url', 'image_file', 'image_files']),
             'slug' => $this->uniqueSlug($slugSource, $product),
             'sku' => $this->uniqueSku($skuSource, $product),
             'blouse_included' => $request->boolean('blouse_included'),
@@ -180,6 +183,13 @@ class ProductController extends Controller
     private function syncExtras(ProductRequest $request, Product $product): void
     {
         $product->collections()->sync($request->input('collection_ids', []));
+        $product->variantProducts()->sync(
+            collect($request->input('product_ids', []))
+                ->map(fn ($productId): int => (int) $productId)
+                ->reject(fn (int $productId): bool => $productId === $product->id)
+                ->values()
+                ->all()
+        );
 
         $uploadedImageUrl = app(AdminImage::class)->store($request->file('image_file'), 'products');
         $imageUrl = $uploadedImageUrl ?? ($request->filled('image_url') ? $request->string('image_url')->toString() : null);
@@ -199,17 +209,6 @@ class ProductController extends Controller
             ]);
         }
 
-        if ($request->filled('variant_color') && $request->filled('variant_sku')) {
-            $product->variants()->updateOrCreate(
-                ['sku' => $request->string('variant_sku')],
-                [
-                    'color' => $request->string('variant_color'),
-                    'quantity' => $request->integer('variant_quantity'),
-                    'stock_alert_quantity' => 3,
-                    'stock_status' => $request->integer('variant_quantity') > 0 ? 'in_stock' : 'out_of_stock',
-                ],
-            );
-        }
     }
 
     /**

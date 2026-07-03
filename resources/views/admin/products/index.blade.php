@@ -22,7 +22,7 @@
                     <td class="font-semibold">{{ $product->name }}</td>
                     <td>{{ $product->category->name }}</td>
                     <td>৳{{ number_format($product->finalPrice()) }}</td>
-                    <td>{{ $product->variants->sum('quantity') }}</td>
+                    <td>{{ $product->quantity }}</td>
                     <td>{{ $product->is_active ? 'Active' : 'Inactive' }}</td>
                     <td>
                         <div class="flex items-center gap-3">

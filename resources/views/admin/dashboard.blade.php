@@ -19,7 +19,7 @@
             <h2 class="font-bold">Low Stock Products</h2>
             <div class="mt-4 grid gap-3 text-sm">
                 @forelse ($lowStockProducts as $product)
-                    <div class="rounded-lg bg-[#f7f5f0] p-3">{{ $product->name }} · {{ $product->variants->sum('quantity') }} pcs</div>
+                    <div class="rounded-lg bg-[#f7f5f0] p-3">{{ $product->name }} · {{ $product->quantity }} pcs</div>
                 @empty
                     <div class="rounded-lg bg-[#f7f5f0] p-3">No low stock products.</div>
                 @endforelse

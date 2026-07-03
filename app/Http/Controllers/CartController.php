@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Support\CartPricing;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -35,15 +34,24 @@ class CartController extends Controller
         ]);
 
         $cart = $this->cart($request);
-        $variantId = $validated['product_variant_id'] ?? $product->variants()->first()?->id;
-        $variant = $variantId ? ProductVariant::query()->where('product_id', $product->id)->findOrFail($variantId) : null;
 
         $item = $cart->items()->firstOrNew([
             'product_id' => $product->id,
-            'product_variant_id' => $variant?->id,
+            'product_variant_id' => null,
         ]);
 
         $item->quantity = $item->exists ? $item->quantity + (int) $validated['quantity'] : (int) $validated['quantity'];
+
+        if ($item->quantity > $product->quantity) {
+            $message = 'Only '.$product->quantity.' items are available.';
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 422);
+            }
+
+            return back()->withErrors(['quantity' => $message]);
+        }
+
         $item->save();
 
         if ($request->expectsJson()) {
@@ -63,7 +71,13 @@ class CartController extends Controller
             'quantity' => ['required', 'integer', 'min:1', 'max:20'],
         ]);
 
-        $this->cart($request)->items()->findOrFail($cartItem)->update($validated);
+        $item = $this->cart($request)->items()->with('product')->findOrFail($cartItem);
+
+        if ((int) $validated['quantity'] > $item->product->quantity) {
+            return back()->withErrors(['quantity' => 'Only '.$item->product->quantity.' items are available.']);
+        }
+
+        $item->update($validated);
 
         return back()->with('status', 'Cart updated.');
     }

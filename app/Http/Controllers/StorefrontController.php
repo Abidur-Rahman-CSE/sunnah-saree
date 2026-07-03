@@ -52,10 +52,25 @@ class StorefrontController extends Controller
     {
         abort_unless($product->is_active, 404);
 
-        $product->load(['category', 'images', 'variants', 'collections']);
+        $product->load([
+            'category',
+            'images',
+            'variants',
+            'collections',
+            'variantProducts.images',
+            'variantOfProducts.images',
+        ]);
+
+        $productVariants = $product->variantProducts
+            ->merge($product->variantOfProducts)
+            ->where('is_active', true)
+            ->unique('id')
+            ->sortBy('name')
+            ->values();
 
         return view('storefront.products.show', [
             'product' => $product,
+            'productVariants' => $productVariants,
             'relatedProducts' => Product::query()->active()->with('images')->where('category_id', $product->category_id)->whereKeyNot($product->id)->take(4)->get(),
             'similarColorProducts' => Product::query()->active()->with('images')->where('color', $product->color)->whereKeyNot($product->id)->take(4)->get(),
             'colorCode' => FashionAttribute::colorCodeFor($product->color),
@@ -164,7 +179,7 @@ class StorefrontController extends Controller
             ->when($request->filled('occasion'), fn ($query) => $query->where('occasion', $request->string('occasion')))
             ->when($request->filled('fabric'), fn ($query) => $query->where('fabric', $request->string('fabric')))
             ->when($request->filled('work_type'), fn ($query) => $query->where('work_type', $request->string('work_type')))
-            ->when($request->filled('availability'), fn ($query) => $query->whereHas('variants', fn ($variants) => $variants->where('quantity', '>', 0)))
+            ->when($request->filled('availability'), fn ($query) => $query->where('quantity', '>', 0))
             ->when($request->filled('offer'), fn ($query) => $query->whereNotNull('discount_price'))
             ->when($request->filled('min_price'), fn ($query) => $query->where('price', '>=', $request->float('min_price')))
             ->when($request->filled('max_price'), fn ($query) => $query->where('price', '<=', $request->float('max_price')));
