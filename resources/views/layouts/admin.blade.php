@@ -25,6 +25,7 @@
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.orders.index') }}">Orders</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.customers.index') }}">Customers</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.payments.index') }}">Payments</a>
+                <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.delivery-charge-rules.index') }}">Delivery Rules</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.settings.edit') }}">Settings</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('home') }}">View Store</a>
                 <form action="{{ route('logout') }}" method="POST">@csrf<button class="rounded-lg px-3 py-2 text-left hover:bg-[#f7f0e4]">Logout</button></form>

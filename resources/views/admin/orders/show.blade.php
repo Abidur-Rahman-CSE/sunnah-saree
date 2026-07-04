@@ -27,6 +27,7 @@
                     </div>
                     <div class="md:col-span-2">
                         <p class="text-xs font-bold uppercase tracking-wide text-[#8d786d]">Shipping Address</p>
+                        <p class="mt-1 font-semibold">{{ collect([$order->shipping_area, $order->shipping_district, $order->shipping_division])->filter()->join(', ') }}</p>
                         <p class="mt-1 font-semibold">{{ $order->shipping_address }}</p>
                     </div>
                 </div>

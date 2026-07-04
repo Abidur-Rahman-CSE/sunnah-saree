@@ -43,6 +43,32 @@
         }
 
         $cartCount = $cartQuery ? (int) ($cartQuery->first()?->items_sum_quantity ?? 0) : 0;
+        $shareeMenuItems = [
+            'All Saree' => route('products.index', ['category' => 'sharee']),
+            'Katan Saree' => route('products.index', ['sharee_type' => 'Katan Sharee']),
+            'Chumki Saree' => route('products.index', ['sharee_type' => 'Chumki Sharee']),
+            'Banarasi Saree' => route('products.index', ['sharee_type' => 'Banarasi Sharee']),
+            'Cotton Saree' => route('products.index', ['sharee_type' => 'Cotton Sharee']),
+            'Silk Saree' => route('products.index', ['sharee_type' => 'Silk Sharee']),
+            'Bridal Saree' => route('products.index', ['sharee_type' => 'Bridal Sharee']),
+            'Party Wear' => route('products.index', ['sharee_type' => 'Party Wear Sharee']),
+            'Daily Wear' => route('products.index', ['sharee_type' => 'Daily Wear Sharee']),
+        ];
+        $navCategories = \App\Models\Category::query()
+            ->where('is_active', true)
+            ->whereNull('parent_id')
+            ->with(['children' => fn ($query) => $query->where('is_active', true)->orderBy('name')])
+            ->orderBy('name')
+            ->get()
+            ->reject(fn ($category) => $category->slug === 'sharee' || strtolower($category->name) === 'sharee');
+        $isShareeMenuActive = request()->routeIs('products.index') && (request('category') === 'sharee' || request()->filled('sharee_type'));
+        $isCategoriesMenuActive = request()->routeIs('categories.show') || (request()->routeIs('products.index') && request()->filled('category') && request('category') !== 'sharee');
+        $isAllProductsActive = request()->routeIs('products.index') && ! request()->filled('category') && ! request()->filled('sharee_type') && request('sort') !== 'latest';
+        $isNewArrivalsActive = request()->routeIs('products.index') && request('sort') === 'latest';
+        $mainMenuClass = 'relative rounded-full px-4 py-2.5 transition hover:bg-white hover:text-[#8a155b] hover:shadow-sm';
+        $activeMainMenuClass = 'bg-white text-[#8a155b] shadow-sm ring-1 ring-[#ead8ba]';
+        $dropdownPanelClass = 'invisible absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 translate-y-2 rounded-lg border border-[#ead8ba] bg-white p-2 text-sm normal-case tracking-normal text-[#4f3d35] opacity-0 shadow-xl shadow-[#7a1f55]/10 transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100';
+        $dropdownLinkClass = 'block rounded-lg px-3 py-2.5 transition hover:bg-[#fff6e8] hover:text-[#8a155b]';
     @endphp
 
     <div class="bg-[#8a155b] px-4 py-2 text-center text-xs font-semibold leading-5 tracking-wide text-white md:text-sm">
@@ -84,17 +110,37 @@
                 </a>
             </nav>
         </div>
-        <nav class="mx-auto hidden max-w-7xl snap-x gap-3 overflow-x-auto px-4 pb-4 text-xs font-semibold uppercase tracking-wide text-[#5a463c] sm:gap-6 lg:flex">
-            <a class="shrink-0 snap-start" href="{{ route('products.index') }}">All Products</a>
-            <a class="shrink-0 snap-start" href="{{ route('products.index', ['category' => 'sharee']) }}">Sharee</a>
-            <a class="shrink-0 snap-start" href="{{ route('products.index', ['sharee_type' => 'Katan Sharee']) }}">Katan</a>
-            <a class="shrink-0 snap-start" href="{{ route('products.index', ['sharee_type' => 'Banarasi Sharee']) }}">Banarasi</a>
-            <a class="shrink-0 snap-start" href="{{ route('products.index', ['sharee_type' => 'Bridal Sharee']) }}">Bridal</a>
-            <a class="shrink-0 snap-start" href="{{ route('products.index', ['sharee_type' => 'Party Wear Sharee']) }}">Party Wear</a>
-            <a class="shrink-0 snap-start" href="{{ route('products.index', ['sharee_type' => 'Daily Wear Sharee']) }}">Daily Wear</a>
-            <a class="shrink-0 snap-start" href="{{ route('products.index', ['sort' => 'latest']) }}">New Arrivals</a>
-            <a class="shrink-0 snap-start" href="{{ route('products.index') }}">Collections</a>
-            <a class="shrink-0 snap-start" href="{{ route('pages.show', 'contact-us') }}">Contact</a>
+        <nav class="mx-auto hidden max-w-7xl items-center justify-center gap-3 px-4 pb-4 text-xs font-semibold uppercase tracking-wide text-[#5a463c] lg:flex xl:gap-5">
+            <a class="{{ $mainMenuClass }} {{ $isAllProductsActive ? $activeMainMenuClass : '' }}" href="{{ route('products.index') }}">All Products</a>
+            <div class="group relative">
+                <a class="{{ $mainMenuClass }} {{ $isShareeMenuActive ? $activeMainMenuClass : '' }} inline-flex items-center gap-1.5" href="{{ route('products.index', ['category' => 'sharee']) }}">
+                    Saree <span class="text-[10px]">▾</span>
+                </a>
+                <div class="{{ $dropdownPanelClass }} grid grid-cols-2 gap-1">
+                    @foreach ($shareeMenuItems as $label => $url)
+                        <a class="{{ $dropdownLinkClass }} {{ url()->current() === strtok($url, '?') && request()->fullUrl() === $url ? 'bg-[#fff6e8] font-bold text-[#8a155b]' : '' }}" href="{{ $url }}">{{ $label }}</a>
+                    @endforeach
+                </div>
+            </div>
+            <div class="group relative">
+                <a class="{{ $mainMenuClass }} {{ $isCategoriesMenuActive ? $activeMainMenuClass : '' }} inline-flex items-center gap-1.5" href="{{ route('products.index') }}">
+                    Categories <span class="text-[10px]">▾</span>
+                </a>
+                <div class="{{ $dropdownPanelClass }}">
+                    @forelse ($navCategories as $category)
+                        <a class="{{ $dropdownLinkClass }} font-semibold {{ request()->routeIs('categories.show') && request()->route('category')?->is($category) ? 'bg-[#fff6e8] text-[#8a155b]' : '' }}" href="{{ route('categories.show', $category) }}">{{ $category->name }}</a>
+                        @foreach ($category->children as $childCategory)
+                            <a class="{{ $dropdownLinkClass }} px-6 text-[#7a6a60] {{ request()->routeIs('categories.show') && request()->route('category')?->is($childCategory) ? 'bg-[#fff6e8] text-[#8a155b]' : '' }}" href="{{ route('categories.show', $childCategory) }}">{{ $childCategory->name }}</a>
+                        @endforeach
+                    @empty
+                        <span class="block rounded-lg px-3 py-2 text-[#8d786d]">No categories available</span>
+                    @endforelse
+                </div>
+            </div>
+            <a class="{{ $mainMenuClass }} {{ $isNewArrivalsActive ? $activeMainMenuClass : '' }}" href="{{ route('products.index', ['sort' => 'latest']) }}">New Arrivals</a>
+            <a class="{{ $mainMenuClass }} {{ request()->routeIs('offers.*') ? $activeMainMenuClass : '' }}" href="{{ route('offers.index') }}">Offers</a>
+            <a class="{{ $mainMenuClass }} {{ request()->routeIs('combos.index') ? $activeMainMenuClass : '' }}" href="{{ route('combos.index') }}">Combos</a>
+            <a class="{{ $mainMenuClass }} {{ request()->routeIs('pages.show') && request()->route('page') === 'contact-us' ? $activeMainMenuClass : '' }}" href="{{ route('pages.show', 'contact-us') }}">Contact</a>
         </nav>
         <div id="mobile-storefront-menu" class="hidden border-t border-[#ead8ba] bg-[#fffaf4] px-4 pb-4 lg:hidden" data-mobile-menu>
             <div class="grid grid-cols-2 gap-2 pt-4 text-sm font-semibold text-[#4f3d35]">
@@ -111,15 +157,32 @@
                 </a>
                 <a href="{{ route('pages.show', 'contact-us') }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-white px-3 py-3 text-center"><x-storefront.icon name="phone" class="h-4 w-4" />Contact</a>
             </div>
-            <div class="mt-3 grid grid-cols-2 gap-2 text-xs font-bold uppercase tracking-wide text-[#5a463c]">
-                <a href="{{ route('products.index') }}" class="rounded-lg bg-[#fff6e8] px-3 py-2 text-center">All Products</a>
-                <a href="{{ route('products.index', ['category' => 'sharee']) }}" class="rounded-lg bg-[#fff6e8] px-3 py-2 text-center">Sharee</a>
-                <a href="{{ route('products.index', ['sharee_type' => 'Katan Sharee']) }}" class="rounded-lg bg-[#fff6e8] px-3 py-2 text-center">Katan</a>
-                <a href="{{ route('products.index', ['sharee_type' => 'Banarasi Sharee']) }}" class="rounded-lg bg-[#fff6e8] px-3 py-2 text-center">Banarasi</a>
-                <a href="{{ route('products.index', ['sharee_type' => 'Bridal Sharee']) }}" class="rounded-lg bg-[#fff6e8] px-3 py-2 text-center">Bridal</a>
-                <a href="{{ route('products.index', ['sharee_type' => 'Party Wear Sharee']) }}" class="rounded-lg bg-[#fff6e8] px-3 py-2 text-center">Party Wear</a>
-                <a href="{{ route('products.index', ['sharee_type' => 'Daily Wear Sharee']) }}" class="rounded-lg bg-[#fff6e8] px-3 py-2 text-center">Daily Wear</a>
-                <a href="{{ route('products.index', ['sort' => 'latest']) }}" class="rounded-lg bg-[#fff6e8] px-3 py-2 text-center">New Arrivals</a>
+            <div class="mt-3 grid gap-2 text-xs font-bold uppercase tracking-wide text-[#5a463c]">
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{{ route('products.index') }}" class="rounded-lg px-3 py-2 text-center {{ $isAllProductsActive ? 'bg-[#8a155b] text-white' : 'bg-[#fff6e8]' }}">All Products</a>
+                    <a href="{{ route('products.index', ['sort' => 'latest']) }}" class="rounded-lg px-3 py-2 text-center {{ $isNewArrivalsActive ? 'bg-[#8a155b] text-white' : 'bg-[#fff6e8]' }}">New Arrivals</a>
+                </div>
+                <details class="rounded-lg px-3 py-2 {{ $isShareeMenuActive ? 'bg-[#8a155b] text-white' : 'bg-[#fff6e8]' }}" @if($isShareeMenuActive) open @endif>
+                    <summary class="cursor-pointer list-none text-center">Saree ▾</summary>
+                    <div class="mt-2 grid grid-cols-2 gap-2 normal-case tracking-normal">
+                        @foreach ($shareeMenuItems as $label => $url)
+                            <a href="{{ $url }}" class="rounded-lg bg-white px-3 py-2 text-center text-[#5a463c]">{{ $label }}</a>
+                        @endforeach
+                    </div>
+                </details>
+                <details class="rounded-lg px-3 py-2 {{ $isCategoriesMenuActive ? 'bg-[#8a155b] text-white' : 'bg-[#fff6e8]' }}" @if($isCategoriesMenuActive) open @endif>
+                    <summary class="cursor-pointer list-none text-center">Categories ▾</summary>
+                    <div class="mt-2 grid gap-2 normal-case tracking-normal">
+                        @forelse ($navCategories as $category)
+                            <a href="{{ route('categories.show', $category) }}" class="rounded-lg bg-white px-3 py-2 text-center font-semibold text-[#5a463c]">{{ $category->name }}</a>
+                            @foreach ($category->children as $childCategory)
+                                <a href="{{ route('categories.show', $childCategory) }}" class="rounded-lg bg-white px-3 py-2 text-center text-[#7a6a60]">{{ $childCategory->name }}</a>
+                            @endforeach
+                        @empty
+                            <span class="rounded-lg bg-white px-3 py-2 text-center text-[#8d786d]">No categories available</span>
+                        @endforelse
+                    </div>
+                </details>
             </div>
         </div>
     </header>

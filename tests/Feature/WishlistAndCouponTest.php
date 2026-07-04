@@ -68,6 +68,9 @@ test('customer can apply coupon and order stores discount', function () {
         'customer_name' => 'Nusrat Jahan',
         'customer_email' => 'nusrat@example.com',
         'customer_phone' => '+8801712121212',
+        'shipping_division' => 'Dhaka',
+        'shipping_district' => 'Dhaka',
+        'shipping_area' => 'Uttara',
         'shipping_address' => 'Uttara, Dhaka',
         'payment_method' => 'cod',
     ])->assertRedirect();

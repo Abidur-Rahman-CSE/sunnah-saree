@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\DeliveryChargeRule;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -33,15 +35,114 @@ test('customer can browse products and place a cash on delivery order', function
         'customer_name' => 'Ayesha Rahman',
         'customer_email' => 'ayesha@example.com',
         'customer_phone' => '+8801712345678',
+        'shipping_division' => 'Dhaka',
+        'shipping_district' => 'Dhaka',
+        'shipping_area' => 'Mirpur',
         'shipping_address' => 'Mirpur, Dhaka',
         'payment_method' => 'cod',
     ])->assertRedirect();
 
     $this->assertDatabaseHas('orders', [
         'customer_phone' => '+8801712345678',
+        'shipping_division' => 'Dhaka',
+        'shipping_district' => 'Dhaka',
+        'shipping_area' => 'Mirpur',
         'payment_method' => 'cod',
         'payment_status' => 'pending',
     ]);
+});
+
+test('checkout applies matching area delivery charge', function () {
+    $this->seed();
+
+    Setting::query()->updateOrCreate(['key' => 'free_delivery_minimum_amount'], ['value' => '999999']);
+    DeliveryChargeRule::query()->create([
+        'scope' => 'area',
+        'locations' => ['Mirpur'],
+        'amount' => 120,
+        'is_active' => true,
+    ]);
+
+    $product = Product::query()->with('variants')->firstOrFail();
+
+    $this->post(route('cart.store', $product), [
+        'product_variant_id' => $product->variants->first()->id,
+        'quantity' => 1,
+    ]);
+
+    $this->post(route('checkout.store'), [
+        'customer_name' => 'Delivery Rule Customer',
+        'customer_email' => 'delivery@example.com',
+        'customer_phone' => '+8801712345600',
+        'shipping_division' => 'Dhaka',
+        'shipping_district' => 'Dhaka',
+        'shipping_area' => 'Mirpur',
+        'shipping_address' => 'Mirpur, Dhaka',
+        'payment_method' => 'cod',
+    ])->assertRedirect();
+
+    $this->assertDatabaseHas('orders', [
+        'customer_phone' => '+8801712345600',
+        'delivery_charge' => 120,
+    ]);
+});
+
+test('checkout applies area delivery charge before district fallback', function () {
+    $this->seed();
+
+    Setting::query()->updateOrCreate(['key' => 'free_delivery_minimum_amount'], ['value' => '999999']);
+    DeliveryChargeRule::query()->create([
+        'scope' => 'district',
+        'locations' => ['Dhaka'],
+        'amount' => 120,
+        'is_active' => true,
+    ]);
+    DeliveryChargeRule::query()->create([
+        'scope' => 'area',
+        'locations' => ['Tejgaon'],
+        'amount' => 100,
+        'is_active' => true,
+    ]);
+
+    $product = Product::query()->with('variants')->firstOrFail();
+
+    $this->post(route('cart.store', $product), [
+        'product_variant_id' => $product->variants->first()->id,
+        'quantity' => 1,
+    ]);
+
+    $this->post(route('checkout.store'), [
+        'customer_name' => 'Priority Rule Customer',
+        'customer_email' => 'priority@example.com',
+        'customer_phone' => '+8801712345611',
+        'shipping_division' => 'Dhaka',
+        'shipping_district' => 'Dhaka',
+        'shipping_area' => 'Tejgaon',
+        'shipping_address' => 'Tejgaon, Dhaka',
+        'payment_method' => 'cod',
+    ])->assertRedirect();
+
+    $this->assertDatabaseHas('orders', [
+        'customer_phone' => '+8801712345611',
+        'delivery_charge' => 100,
+    ]);
+});
+
+test('checkout does not show delivery charge before area selection', function () {
+    $this->seed();
+
+    Setting::query()->updateOrCreate(['key' => 'free_delivery_minimum_amount'], ['value' => '999999']);
+
+    $product = Product::query()->with('variants')->firstOrFail();
+
+    $this->post(route('cart.store', $product), [
+        'product_variant_id' => $product->variants->first()->id,
+        'quantity' => 1,
+    ]);
+
+    $this->get(route('checkout.create'))
+        ->assertOk()
+        ->assertSee('data-delivery-charge>৳0', false);
 });
 
 test('add to cart can update the navbar count without leaving the page', function () {

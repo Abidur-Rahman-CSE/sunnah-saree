@@ -36,6 +36,7 @@
                     <p>{{ $order->customer_name }}</p>
                     <p>{{ $order->customer_phone }}</p>
                     <p>{{ $order->customer_email }}</p>
+                    <p>{{ collect([$order->shipping_area, $order->shipping_district, $order->shipping_division])->filter()->join(', ') }}</p>
                     <p>{{ $order->shipping_address }}</p>
                 </div>
             </div>

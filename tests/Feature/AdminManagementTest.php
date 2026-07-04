@@ -2,6 +2,7 @@
 
 use App\Models\Category;
 use App\Models\Collection;
+use App\Models\DeliveryChargeRule;
 use App\Models\FashionAttribute;
 use App\Models\Offer;
 use App\Models\Order;
@@ -29,6 +30,7 @@ test('admin can open remaining management modules', function () {
         route('admin.banners.index') => 'Banners',
         route('admin.customers.index') => 'Customers',
         route('admin.payments.index') => 'Payments',
+        route('admin.delivery-charge-rules.index') => 'Delivery Rules',
         route('admin.settings.edit') => 'Website Settings',
     ] as $route => $text) {
         $this->get($route)->assertOk()->assertSee($text);
@@ -108,6 +110,9 @@ test('admin can upload category image and print invoice', function () {
             'customer_name' => 'Invoice Customer',
             'customer_email' => 'invoice@example.com',
             'customer_phone' => '+8801700000011',
+            'shipping_division' => 'Dhaka',
+            'shipping_district' => 'Dhaka',
+            'shipping_area' => 'Uttara',
             'shipping_address' => 'Dhaka',
             'payment_method' => 'cod',
         ]);
@@ -121,6 +126,7 @@ test('admin can upload category image and print invoice', function () {
         ->assertSee('Invoice Customer')
         ->assertSee('+8801700000011')
         ->assertSee('invoice@example.com')
+        ->assertSee('Uttara, Dhaka, Dhaka')
         ->assertSee('Dhaka');
 
     $this->actingAs($admin)
@@ -128,6 +134,39 @@ test('admin can upload category image and print invoice', function () {
         ->assertOk()
         ->assertSee($order->order_number)
         ->assertSee('Invoice Customer');
+});
+
+test('admin can manage delivery charge rules', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+
+    $this->actingAs($admin)
+        ->put(route('admin.delivery-charge-rules.update'), [
+            'delivery_charge_rules' => [
+                [
+                    'scope' => 'division',
+                    'locations' => ['Chattogram'],
+                    'amount' => 100,
+                    'is_active' => '1',
+                ],
+                [
+                    'scope' => 'area',
+                    'locations' => ['Savar', 'Mirpur'],
+                    'amount' => 150,
+                    'is_active' => '1',
+                ],
+            ],
+        ])
+        ->assertRedirect(route('admin.delivery-charge-rules.index'));
+
+    expect(DeliveryChargeRule::query()->count())->toBe(2);
+
+    $this->assertDatabaseHas('delivery_charge_rules', [
+        'scope' => 'area',
+        'amount' => 150,
+        'is_active' => true,
+    ]);
 });
 
 test('admin can upload multiple product images and storefront shows gallery', function () {

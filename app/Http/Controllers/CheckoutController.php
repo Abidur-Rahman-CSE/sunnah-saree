@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Cart;
+use App\Models\DeliveryChargeRule;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Support\CartPricing;
@@ -26,6 +27,10 @@ class CheckoutController extends Controller
 
         return view('storefront.checkout', [
             'cart' => $cart,
+            'locations' => config('bangladesh'),
+            'deliveryChargeRules' => DeliveryChargeRule::query()
+                ->where('is_active', true)
+                ->get(['scope', 'locations', 'amount']),
             ...$summary,
         ]);
     }
@@ -50,7 +55,7 @@ class CheckoutController extends Controller
             $summary = app(CartPricing::class)->summary($cart, $request);
 
             $order = Order::query()->create([
-                ...$request->safe()->only(['customer_name', 'customer_email', 'customer_phone', 'shipping_address', 'payment_method']),
+                ...$request->safe()->only(['customer_name', 'customer_email', 'customer_phone', 'shipping_division', 'shipping_district', 'shipping_area', 'shipping_address', 'payment_method']),
                 'user_id' => $request->user()?->id,
                 'order_number' => 'SSG-'.now()->format('Ymd').'-'.str()->upper(str()->random(6)),
                 'subtotal' => $summary['subtotal'],

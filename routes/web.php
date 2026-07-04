@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DeliveryChargeRuleController;
 use App\Http\Controllers\Admin\FashionAttributeController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\OrderController;
@@ -82,6 +83,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::get('customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
     Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('delivery-charge-rules', [DeliveryChargeRuleController::class, 'index'])->name('delivery-charge-rules.index');
+    Route::put('delivery-charge-rules', [DeliveryChargeRuleController::class, 'update'])->name('delivery-charge-rules.update');
     Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
     Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
 });

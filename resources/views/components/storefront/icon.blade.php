@@ -56,6 +56,41 @@
         </svg>
         @break
 
+    @case('thread')
+        <svg {{ $attributes->merge(['class' => $class]) }} aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 3h10l-2 18H9L7 3z" />
+            <path d="M8 7h8" />
+            <path d="M8 11h8" />
+            <path d="M8 15h8" />
+            <path d="M5 21h14" />
+        </svg>
+        @break
+
+    @case('wallet')
+        <svg {{ $attributes->merge(['class' => $class]) }} aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+            <path d="M16 12h5" />
+            <path d="M17.5 12h.01" />
+            <path d="M6 5l9-2 2 2" />
+        </svg>
+        @break
+
+    @case('rotate-left')
+        <svg {{ $attributes->merge(['class' => $class]) }} aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7v6h6" />
+            <path d="M4.5 17A8 8 0 1 0 5 7.6L3 13" />
+        </svg>
+        @break
+
+    @case('headphones')
+        <svg {{ $attributes->merge(['class' => $class]) }} aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+            <path d="M4 14a2 2 0 0 1 2-2h1v7H6a2 2 0 0 1-2-2v-3z" />
+            <path d="M20 14a2 2 0 0 0-2-2h-1v7h1a2 2 0 0 0 2-2v-3z" />
+            <path d="M15 19a3 3 0 0 1-3 2h-1" />
+        </svg>
+        @break
+
     @case('search')
         <svg {{ $attributes->merge(['class' => $class]) }} aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="7" />

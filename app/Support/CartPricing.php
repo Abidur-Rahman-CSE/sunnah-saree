@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Cart;
 use App\Models\Coupon;
+use App\Models\DeliveryChargeRule;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
@@ -17,9 +18,15 @@ class CartPricing
         $subtotal = $cart->subtotal();
         $coupon = $this->activeCoupon($request);
         $discountAmount = $coupon ? $this->discountAmount($coupon, $subtotal) : 0.0;
-        $deliveryCharge = $cart->items->isEmpty() || $subtotal >= (float) Setting::valueFor('free_delivery_minimum_amount', 5000)
-            ? 0.0
-            : (float) Setting::valueFor('delivery_charge', 80);
+        $deliveryCharge = 0.0;
+
+        if ($cart->items->isNotEmpty() && $subtotal < (float) Setting::valueFor('free_delivery_minimum_amount', 5000)) {
+            $deliveryCharge = DeliveryChargeRule::amountFor(
+                $request->input('shipping_division'),
+                $request->input('shipping_district'),
+                $request->input('shipping_area'),
+            ) ?? (float) Setting::valueFor('delivery_charge', 80);
+        }
 
         return [
             'subtotal' => $subtotal,

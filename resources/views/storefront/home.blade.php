@@ -48,6 +48,15 @@
             'Budget Collection' => 'https://images.unsplash.com/photo-1595341595379-cf1cd0fb7fb3?auto=format&fit=crop&w=900&q=80',
             'Premium Collection' => 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=80',
         ];
+
+        $trustCards = [
+            ['title' => 'Premium Fabrics', 'copy' => 'Sourced with care', 'image' => asset('images/icons/pattern.png')],
+            ['title' => 'Authentic Weaves', 'copy' => 'Traditional craftsmanship', 'icon' => 'thread'],
+            ['title' => 'Elegant Packaging', 'copy' => 'Gift-ready every time', 'icon' => 'gift'],
+            ['title' => 'Cash on Delivery', 'copy' => 'Pay when you receive', 'icon' => 'wallet'],
+            ['title' => 'Easy Returns', 'copy' => 'Hassle-free process', 'icon' => 'rotate-left'],
+            ['title' => 'Customer Support', 'copy' => 'We are here to help', 'icon' => 'headphones'],
+        ];
     @endphp
 
     <section class="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:gap-8 sm:py-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
@@ -169,11 +178,17 @@
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Trusted by Thousands, Loved for Quality" subtitle="Premium quality, elegant designs, and service you can trust." />
         <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-            @foreach (['Premium Fabrics' => 'Sourced with care', 'Authentic Weaves' => 'Traditional craftsmanship', 'Elegant Packaging' => 'Gift-ready every time', 'Cash on Delivery' => 'Pay when you receive', 'Easy Returns' => 'Hassle-free process', 'Customer Support' => 'We are here to help'] as $title => $copy)
-                <div class="rounded-lg border border-[#ead8ba] bg-white/80 p-4 text-center">
-                    <span class="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-lg bg-[#fff6e6] text-[#b78a34]">✧</span>
-                    <h3 class="text-sm font-bold">{{ $title }}</h3>
-                    <p class="mt-1 text-xs text-[#6f5a50]">{{ $copy }}</p>
+            @foreach ($trustCards as $card)
+                <div class="rounded-lg border border-[#ead8ba] bg-white/80 p-4 text-center shadow-sm transition hover:-translate-y-1 hover:border-[#c9a24a] hover:bg-white hover:shadow-md">
+                    <span class="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-lg bg-[#fff6e6] text-[#b78a34]">
+                        @if (isset($card['image']))
+                            <img src="{{ $card['image'] }}" alt="" class="h-5 w-5 object-contain">
+                        @else
+                            <x-storefront.icon :name="$card['icon']" class="h-5 w-5" />
+                        @endif
+                    </span>
+                    <h3 class="text-sm font-bold">{{ $card['title'] }}</h3>
+                    <p class="mt-1 text-xs text-[#6f5a50]">{{ $card['copy'] }}</p>
                 </div>
             @endforeach
         </div>
