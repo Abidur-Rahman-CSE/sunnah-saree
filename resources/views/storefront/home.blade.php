@@ -129,7 +129,7 @@
         <div class="mt-6 flex snap-x gap-4 overflow-x-auto pb-3 lg:grid lg:grid-cols-6 lg:overflow-visible lg:pb-0">
             @foreach ($collections as $collection)
                 <a href="{{ route('collections.show', $collection) }}" class="group relative min-h-40 min-w-[calc(50%-0.5rem)] snap-start overflow-hidden rounded-lg border border-[#ead8ba] bg-white p-3 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:min-w-64 sm:p-4 lg:min-w-0">
-                    <img src="{{ $collectionImages[$collection->name] ?? $collection->banner_url }}" alt="{{ $collection->name }}" class="absolute inset-0 h-full w-full object-cover opacity-55 transition group-hover:scale-105">
+                    <img src="{{ $collection->banner_url ?: ($collectionImages[$collection->name] ?? 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=900&q=80') }}" alt="{{ $collection->name }}" class="absolute inset-0 h-full w-full object-cover opacity-55 transition group-hover:scale-105">
                     <div class="absolute inset-0 bg-gradient-to-br from-white via-white/70 to-transparent"></div>
                     <div class="relative">
                         <h3 class="font-serif text-lg font-bold">{{ $collection->name }}</h3>
