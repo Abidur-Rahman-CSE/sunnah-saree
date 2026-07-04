@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\DeliveryChargeRule;
 use App\Models\Product;
 use App\Models\Setting;
@@ -143,6 +144,19 @@ test('checkout does not show delivery charge before area selection', function ()
     $this->get(route('checkout.create'))
         ->assertOk()
         ->assertSee('data-delivery-charge>৳0', false);
+});
+
+test('home essentials hide inactive categories', function () {
+    $this->seed();
+
+    Category::query()
+        ->where('slug', 'organic-oil')
+        ->update(['is_active' => false]);
+
+    $this->get('/')
+        ->assertOk()
+        ->assertDontSee('Organic Oil')
+        ->assertSee('Ornaments');
 });
 
 test('add to cart can update the navbar count without leaving the page', function () {

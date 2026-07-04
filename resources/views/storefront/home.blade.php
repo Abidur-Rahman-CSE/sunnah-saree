@@ -39,6 +39,10 @@
                 'image' => 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=900&q=80',
             ],
         ];
+        $activeCategorySlugs = $categories->pluck('slug')->all();
+        $essentials = collect($essentials)
+            ->filter(fn (array $essential): bool => in_array($essential['slug'], $activeCategorySlugs, true))
+            ->values();
 
         $collectionImages = [
             'Eid Collection' => 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=900&q=80',
