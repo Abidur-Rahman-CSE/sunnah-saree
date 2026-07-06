@@ -35,10 +35,40 @@
 
             <div class="rounded-lg border border-[#e5ded0] bg-white p-6 shadow-sm">
                 <h2 class="font-bold">Items</h2>
-                <table class="mt-4 w-full text-left text-sm">
-                    <thead><tr class="border-b"><th class="py-3">Product</th><th>Variant</th><th>Qty</th><th>Total</th></tr></thead>
-                    <tbody>@foreach ($order->items as $item)<tr class="border-b"><td class="py-3">{{ $item->product_name }}</td><td>{{ $item->variant_name }}</td><td>{{ $item->quantity }}</td><td>৳{{ number_format((float) $item->total) }}</td></tr>@endforeach</tbody>
-                </table>
+                <div class="mt-4 overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="border-b text-xs font-bold uppercase tracking-wide text-[#8d786d]">
+                                <th class="py-3">Product</th>
+                                <th>Variant</th>
+                                <th>Qty</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($order->items as $item)
+                                <tr class="border-b last:border-0">
+                                    <td class="py-3">
+                                        <div class="flex min-w-64 items-center gap-3">
+                                            @if ($item->product)
+                                                <img src="{{ $item->product->primaryImage() }}" alt="{{ $item->product_name }}" class="h-14 w-14 rounded-lg border border-[#eadcc3] object-cover">
+                                            @else
+                                                <span class="grid h-14 w-14 place-items-center rounded-lg border border-dashed border-[#d8c7a8] bg-[#fffaf4] text-xs font-bold text-[#8d786d]">No image</span>
+                                            @endif
+                                            <div>
+                                                <p class="font-semibold text-[#2f1f1a]">{{ $item->product_name }}</p>
+                                                <p class="mt-1 text-xs font-semibold text-[#8d786d]">Product ID: {{ $item->product_id ?? 'Deleted' }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ $item->variant_name ?: 'Default' }}</td>
+                                    <td>{{ $item->quantity }}</td>
+                                    <td class="font-semibold">৳{{ number_format((float) $item->total) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="h-fit rounded-lg border border-[#e5ded0] bg-white p-6 shadow-sm">

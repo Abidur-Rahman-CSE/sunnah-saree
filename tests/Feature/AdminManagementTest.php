@@ -117,7 +117,11 @@ test('admin can upload category image and print invoice', function () {
             'payment_method' => 'cod',
         ]);
 
-    $order = Order::query()->where('customer_phone', '+8801700000011')->firstOrFail();
+    $order = Order::query()
+        ->with('items.product.images')
+        ->where('customer_phone', '+8801700000011')
+        ->firstOrFail();
+    $orderItem = $order->items->first();
 
     $this->actingAs($admin)
         ->get(route('admin.orders.show', $order))
@@ -127,7 +131,9 @@ test('admin can upload category image and print invoice', function () {
         ->assertSee('+8801700000011')
         ->assertSee('invoice@example.com')
         ->assertSee('Uttara, Dhaka, Dhaka')
-        ->assertSee('Dhaka');
+        ->assertSee('Dhaka')
+        ->assertSee('Product ID: '.$orderItem->product_id)
+        ->assertSee($orderItem->product->primaryImage());
 
     $this->actingAs($admin)
         ->get(route('admin.orders.invoice', $order))

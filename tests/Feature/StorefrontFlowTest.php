@@ -213,3 +213,20 @@ test('product filters are scoped by selected category attributes', function () {
         ->assertDontSee('Fabric')
         ->assertDontSee('Work Type');
 });
+
+test('category page can apply product filters', function () {
+    $this->seed();
+
+    $category = Category::query()->where('slug', 'sharee')->firstOrFail();
+    $product = Product::query()
+        ->where('category_id', $category->id)
+        ->whereNotNull('sharee_type')
+        ->firstOrFail();
+
+    $this->get(route('categories.show', [
+        'category' => $category,
+        'sharee_type' => $product->sharee_type,
+    ]))
+        ->assertOk()
+        ->assertSee($product->name);
+});

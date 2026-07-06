@@ -12,6 +12,7 @@ use App\Models\Product;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection as SupportCollection;
 
@@ -171,7 +172,7 @@ class StorefrontController extends Controller
         ];
     }
 
-    private function applyProductFilters(Builder|BelongsToMany $products, Request $request): void
+    private function applyProductFilters(Builder|BelongsToMany|HasMany $products, Request $request): void
     {
         $products
             ->when($request->filled('sharee_type'), fn ($query) => $query->where('sharee_type', $request->string('sharee_type')))
