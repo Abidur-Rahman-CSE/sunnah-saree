@@ -15,7 +15,7 @@
                                 <span class="flex h-14 w-20 items-center justify-center rounded-lg border border-[#eadcc3] bg-[#faf8f3] text-xs text-[#8d786d]">No image</span>
                             @endif
                         </td>
-                        <td class="font-semibold">{{ $banner->title }}</td><td>{{ $banner->placement }}</td><td>{{ $banner->headline }}</td><td>{{ $banner->is_active ? 'Active' : 'Inactive' }}</td><td><a class="font-semibold text-[#7a1f55]" href="{{ route('admin.banners.edit', $banner) }}">Edit</a></td>
+                        <td class="font-semibold">{{ $banner->title }}</td><td>{{ $banner->placementLabelText() }}</td><td>{{ $banner->headline }}</td><td>{{ $banner->is_active ? 'Active' : 'Inactive' }}</td><td><a class="font-semibold text-[#7a1f55]" href="{{ route('admin.banners.edit', $banner) }}">Edit</a></td>
                     </tr>
                 @endforeach
             </tbody>

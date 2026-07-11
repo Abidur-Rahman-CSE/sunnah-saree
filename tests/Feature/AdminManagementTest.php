@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Collection;
 use App\Models\DeliveryChargeRule;
@@ -67,18 +68,40 @@ test('admin can open remaining management modules', function () {
         'is_active' => '1',
     ])->assertRedirect(route('admin.coupons.index'));
 
-    $this->post(route('admin.banners.store'), [
-        'title' => 'Promo Banner',
-        'placement' => 'promotional',
-        'headline' => 'Fresh picks',
-        'is_active' => '1',
-    ])->assertRedirect(route('admin.banners.index'));
-
     $this->assertDatabaseHas('collections', ['slug' => 'test-collection']);
     $this->assertDatabaseHas('offers', ['slug' => 'test-offer']);
     $this->assertDatabaseHas('combos', ['slug' => 'test-combo']);
     $this->assertDatabaseHas('coupons', ['code' => 'SAVE10']);
-    $this->assertDatabaseHas('banners', ['title' => 'Promo Banner']);
+});
+
+test('banner placement uses available dropdown and locks after creation', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+    $heroBanner = Banner::query()->where('placement', 'hero')->firstOrFail();
+
+    $this->actingAs($admin)
+        ->get(route('admin.banners.create'))
+        ->assertOk()
+        ->assertSee('No placement available')
+        ->assertSee('All single-use banner placements already have banners')
+        ->assertDontSee('<option value="hero"', false);
+
+    $this->actingAs($admin)
+        ->get(route('admin.banners.edit', $heroBanner))
+        ->assertOk()
+        ->assertSee('Homepage hero banner')
+        ->assertSee('Placement is locked after creation')
+        ->assertSee('name="placement" value="hero"', false)
+        ->assertSee('disabled class=', false);
+
+    Banner::query()->delete();
+
+    $this->actingAs($admin)
+        ->get(route('admin.banners.create'))
+        ->assertOk()
+        ->assertSee('<option value="hero"', false)
+        ->assertSee('Only one banner can use this placement');
 });
 
 test('admin can manage announcement bar without default delivery charge field', function () {
