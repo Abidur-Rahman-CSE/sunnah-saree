@@ -7,6 +7,7 @@ use App\Models\FashionAttribute;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -78,6 +79,40 @@ test('admin can open remaining management modules', function () {
     $this->assertDatabaseHas('combos', ['slug' => 'test-combo']);
     $this->assertDatabaseHas('coupons', ['code' => 'SAVE10']);
     $this->assertDatabaseHas('banners', ['title' => 'Promo Banner']);
+});
+
+test('admin can manage announcement bar without default delivery charge field', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+
+    $this->actingAs($admin)
+        ->get(route('admin.settings.edit'))
+        ->assertOk()
+        ->assertSee('Announcement bar text')
+        ->assertDontSee('Default delivery charge');
+
+    $this->actingAs($admin)
+        ->put(route('admin.settings.update'), [
+            'website_name' => 'Sunnah Sharee Ghar',
+            'phone' => '+8801700000000',
+            'email' => 'care@sunnahshareeghar.com',
+            'facebook_page_link' => 'https://facebook.com/sunnahshareeghar',
+            'announcement_bar_text' => 'Fast delivery in Dhaka • Cash on delivery • Easy exchange support',
+            'free_delivery_minimum_amount' => '5000',
+            'cod_enabled' => '1',
+            'online_payment_enabled' => '1',
+            'address' => 'Dhaka, Bangladesh',
+        ])
+        ->assertRedirect(route('admin.settings.edit'));
+
+    expect(Setting::valueFor('announcement_bar_text'))->toBe('Fast delivery in Dhaka • Cash on delivery • Easy exchange support');
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('Fast delivery in Dhaka')
+        ->assertSee('Cash on delivery')
+        ->assertSee('Easy exchange support');
 });
 
 test('admin can upload category image and print invoice', function () {

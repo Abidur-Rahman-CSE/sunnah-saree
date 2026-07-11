@@ -28,7 +28,7 @@ class SettingRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'address' => ['nullable', 'string', 'max:1000'],
             'facebook_page_link' => ['nullable', 'url', 'max:2048'],
-            'delivery_charge' => ['required', 'numeric', 'min:0'],
+            'announcement_bar_text' => ['nullable', 'string', 'max:255'],
             'free_delivery_minimum_amount' => ['required', 'numeric', 'min:0'],
             'cod_enabled' => ['nullable', 'boolean'],
             'online_payment_enabled' => ['nullable', 'boolean'],

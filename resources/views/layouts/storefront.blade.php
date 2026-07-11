@@ -65,15 +65,25 @@
         $isCategoriesMenuActive = request()->routeIs('categories.show') || (request()->routeIs('products.index') && request()->filled('category') && request('category') !== 'sharee');
         $isAllProductsActive = request()->routeIs('products.index') && ! request()->filled('category') && ! request()->filled('sharee_type') && request('sort') !== 'latest';
         $isNewArrivalsActive = request()->routeIs('products.index') && request('sort') === 'latest';
+        $announcementBarText = \App\Models\Setting::valueFor('announcement_bar_text', 'Free delivery over ৳5,000 • Cash on delivery available • Easy return support');
+        $announcementBarItems = collect(explode('•', $announcementBarText))
+            ->map(fn (string $item): string => trim($item))
+            ->filter()
+            ->values();
         $mainMenuClass = 'relative rounded-full px-4 py-2.5 transition hover:bg-white hover:text-[#8a155b] hover:shadow-sm';
         $activeMainMenuClass = 'bg-white text-[#8a155b] shadow-sm ring-1 ring-[#ead8ba]';
         $dropdownPanelClass = 'invisible absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 translate-y-2 rounded-lg border border-[#ead8ba] bg-white p-2 text-sm normal-case tracking-normal text-[#4f3d35] opacity-0 shadow-xl shadow-[#7a1f55]/10 transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100';
         $dropdownLinkClass = 'block rounded-lg px-3 py-2.5 transition hover:bg-[#fff6e8] hover:text-[#8a155b]';
     @endphp
 
-    <div class="bg-[#8a155b] px-4 py-2 text-center text-xs font-semibold leading-5 tracking-wide text-white md:text-sm">
-        Free delivery over ৳5,000 <span class="mx-2 text-[#f1d88a]">•</span> Cash on delivery available <span class="mx-2 text-[#f1d88a]">•</span> Easy return support
-    </div>
+    @if ($announcementBarItems->isNotEmpty())
+        <div class="bg-[#8a155b] px-4 py-2 text-center text-xs font-semibold leading-5 tracking-wide text-white md:text-sm">
+            @foreach ($announcementBarItems as $announcementBarItem)
+                @if (! $loop->first)<span class="mx-2 text-[#f1d88a]">•</span>@endif
+                <span>{{ $announcementBarItem }}</span>
+            @endforeach
+        </div>
+    @endif
 
     <header class="sticky top-0 z-40 border-b border-[#ead8ba] bg-[#fffaf4]/95 shadow-[0_10px_30px_rgba(122,31,85,0.06)] backdrop-blur">
         <div class="mx-auto grid max-w-7xl min-w-0 grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2 px-4 py-3 sm:gap-3 lg:grid-cols-[220px_minmax(0,1fr)_320px] lg:gap-4 lg:py-4 xl:grid-cols-[260px_minmax(0,1fr)_360px]">

@@ -194,6 +194,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'care@sunnahshareeghar.com',
             'address' => 'Dhaka, Bangladesh',
             'delivery_charge' => '80',
+            'announcement_bar_text' => 'Free delivery over ৳5,000 • Cash on delivery available • Easy return support',
             'free_delivery_minimum_amount' => '5000',
             'cod_enabled' => '1',
             'online_payment_enabled' => '1',
