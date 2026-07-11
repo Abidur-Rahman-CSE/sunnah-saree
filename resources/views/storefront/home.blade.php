@@ -64,30 +64,30 @@
     @endphp
 
     <section class="relative isolate overflow-hidden border-b border-[#ead8ba]">
-        <img src="{{ $hero?->image_url ?? 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=1800&q=80' }}" alt="Premium sharee collection" class="absolute inset-0 -z-30 h-full w-full object-cover">
-        <div class="absolute inset-0 -z-20 bg-[#2f241f]/55"></div>
-        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#2f241f]/95 via-[#5c2342]/72 to-[#2f241f]/18"></div>
+        <img src="{{ $hero?->image_url ?? 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=1800&q=80' }}" alt="Premium sharee collection" class="absolute inset-0 -z-30 h-full w-full object-cover object-[62%_center] sm:object-center">
+        <div class="absolute inset-0 -z-20 bg-[#2f241f]/58"></div>
+        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#2f241f]/95 via-[#5c2342]/76 to-[#2f241f]/24"></div>
 
-        <div class="mx-auto flex min-h-[540px] max-w-7xl items-center px-4 py-16 sm:min-h-[600px] sm:py-20 lg:min-h-[660px]">
-            <div class="max-w-3xl text-white">
-                <p class="text-xs font-bold uppercase tracking-[0.24em] text-[#f4d885] sm:text-sm">Premium light boutique</p>
-                <h1 class="mt-4 font-serif text-4xl font-bold leading-tight text-white drop-shadow-[0_3px_18px_rgba(0,0,0,0.28)] sm:text-5xl md:text-6xl lg:text-7xl">{{ $hero?->headline ?? 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
-                <p class="mt-5 max-w-2xl text-base leading-7 text-[#fff4df] sm:text-lg">Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
-                <div class="mt-8 flex flex-wrap gap-3">
+        <div class="mx-auto flex min-h-[520px] max-w-7xl items-center px-4 py-12 sm:min-h-[580px] sm:py-16 lg:min-h-[640px] lg:py-18 xl:min-h-[680px]">
+            <div class="w-full max-w-3xl text-white">
+                <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-[#f4d885] sm:text-xs">Premium light boutique</p>
+                <h1 class="mt-3 max-w-3xl font-serif text-4xl font-bold leading-[1.08] text-white drop-shadow-[0_3px_18px_rgba(0,0,0,0.28)] sm:text-5xl md:text-6xl lg:text-7xl">{{ $hero?->headline ?? 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
+                <p class="mt-4 max-w-xl text-sm leading-6 text-[#fff4df] sm:text-base sm:leading-7 lg:text-lg">Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <a href="{{ route('products.index', ['category' => 'sharee']) }}" class="flex-1 rounded-lg bg-[#8a155b] px-5 py-3 text-center font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-[#6f1047] sm:flex-none sm:px-6">{{ $hero?->cta_label ?? 'Shop Sharee' }}</a>
                     <a href="{{ route('offers.index') }}" class="flex-1 rounded-lg border border-[#f4d885] bg-white/10 px-5 py-3 text-center font-semibold text-white backdrop-blur transition hover:bg-white hover:text-[#8a155b] sm:flex-none sm:px-6">View Offers</a>
                 </div>
 
-                <div class="mt-10 grid max-w-2xl grid-cols-1 gap-3 border-t border-white/20 pt-5 text-sm text-[#fff4df] sm:grid-cols-3">
-                    <div>
+                <div class="mt-7 grid max-w-2xl grid-cols-1 gap-3 border-t border-white/20 pt-4 text-xs text-[#fff4df] sm:grid-cols-3 sm:text-sm">
+                    <div class="rounded-lg bg-white/8 p-3 ring-1 ring-white/10 sm:bg-transparent sm:p-0 sm:ring-0">
                         <p class="font-bold text-white">Boutique edit</p>
                         <p class="mt-1 text-[#f5dfb1]">Occasion-ready looks</p>
                     </div>
-                    <div>
+                    <div class="rounded-lg bg-white/8 p-3 ring-1 ring-white/10 sm:bg-transparent sm:p-0 sm:ring-0">
                         <p class="font-bold text-white">Premium fabric</p>
                         <p class="mt-1 text-[#f5dfb1]">Texture-first curation</p>
                     </div>
-                    <div>
+                    <div class="rounded-lg bg-white/8 p-3 ring-1 ring-white/10 sm:bg-transparent sm:p-0 sm:ring-0">
                         <p class="font-bold text-white">Gift-ready</p>
                         <p class="mt-1 text-[#f5dfb1]">Packed with care</p>
                     </div>
