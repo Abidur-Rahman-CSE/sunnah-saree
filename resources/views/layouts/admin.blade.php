@@ -56,10 +56,15 @@
 
                 Array.from(input.files).forEach((file) => {
                     const image = document.createElement('img');
+                    const previewClasses = {
+                        portrait: 'aspect-[4/5] rounded-lg border border-[#eadcc3] object-cover',
+                        wide: 'aspect-video rounded-lg border border-[#eadcc3] object-cover',
+                        square: 'aspect-square rounded-lg border border-[#eadcc3] object-cover',
+                    };
 
                     image.src = URL.createObjectURL(file);
                     image.alt = file.name;
-                    image.className = 'aspect-square rounded-lg border border-[#eadcc3] object-cover';
+                    image.className = previewClasses[input.dataset.imagePreviewShape] || previewClasses.square;
                     image.onload = () => URL.revokeObjectURL(image.src);
 
                     target.appendChild(image);

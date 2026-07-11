@@ -63,21 +63,35 @@
         ];
     @endphp
 
-    <section class="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:gap-8 sm:py-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <div class="py-4 sm:py-8">
-            <p class="text-sm font-bold uppercase text-[#c9a24a]">Premium light boutique</p>
-            <h1 class="mt-3 max-w-3xl font-serif text-4xl font-bold leading-tight text-[#2f241f] sm:text-5xl md:text-6xl">{{ $hero?->headline ?? 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
-            <p class="mt-5 max-w-2xl text-base leading-7 text-[#6f5a50] sm:text-lg">No model photos needed. Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
-            <div class="mt-8 flex flex-wrap gap-3">
-                <a href="{{ route('products.index', ['category' => 'sharee']) }}" class="flex-1 rounded-lg bg-[#8a155b] px-5 py-3 text-center font-semibold text-white shadow-lg shadow-[#8a155b]/20 transition hover:bg-[#6f1047] sm:flex-none sm:px-6">{{ $hero?->cta_label ?? 'Shop Sharee' }}</a>
-                <a href="{{ route('offers.index') }}" class="flex-1 rounded-lg border border-[#c9a24a] bg-white px-5 py-3 text-center font-semibold text-[#8a155b] transition hover:border-[#8a155b] sm:flex-none sm:px-6">View Offers</a>
-            </div>
-        </div>
-        <div class="relative">
-            <img src="{{ $hero?->image_url ?? 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=1600&q=80' }}" alt="Premium fabric flat-lay" class="aspect-[4/3] w-full rounded-lg border border-[#d8b879] object-cover shadow-2xl shadow-[#7a1f55]/10">
-            <div class="absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] rounded-lg border border-[#ead8ba] bg-white/90 p-3 shadow-lg backdrop-blur sm:bottom-4 sm:left-4 sm:p-4">
-                <p class="text-xs font-bold uppercase tracking-wide text-[#c9a24a]">Featured</p>
-                <p class="font-serif text-lg font-bold sm:text-xl">Bridal boutique edit</p>
+    <section class="relative isolate overflow-hidden border-b border-[#ead8ba]">
+        <img src="{{ $hero?->image_url ?? 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=1800&q=80' }}" alt="Premium sharee collection" class="absolute inset-0 -z-30 h-full w-full object-cover">
+        <div class="absolute inset-0 -z-20 bg-[#2f241f]/55"></div>
+        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#2f241f]/95 via-[#5c2342]/72 to-[#2f241f]/18"></div>
+
+        <div class="mx-auto flex min-h-[540px] max-w-7xl items-center px-4 py-16 sm:min-h-[600px] sm:py-20 lg:min-h-[660px]">
+            <div class="max-w-3xl text-white">
+                <p class="text-xs font-bold uppercase tracking-[0.24em] text-[#f4d885] sm:text-sm">Premium light boutique</p>
+                <h1 class="mt-4 font-serif text-4xl font-bold leading-tight text-white drop-shadow-[0_3px_18px_rgba(0,0,0,0.28)] sm:text-5xl md:text-6xl lg:text-7xl">{{ $hero?->headline ?? 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
+                <p class="mt-5 max-w-2xl text-base leading-7 text-[#fff4df] sm:text-lg">Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <a href="{{ route('products.index', ['category' => 'sharee']) }}" class="flex-1 rounded-lg bg-[#8a155b] px-5 py-3 text-center font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-[#6f1047] sm:flex-none sm:px-6">{{ $hero?->cta_label ?? 'Shop Sharee' }}</a>
+                    <a href="{{ route('offers.index') }}" class="flex-1 rounded-lg border border-[#f4d885] bg-white/10 px-5 py-3 text-center font-semibold text-white backdrop-blur transition hover:bg-white hover:text-[#8a155b] sm:flex-none sm:px-6">View Offers</a>
+                </div>
+
+                <div class="mt-10 grid max-w-2xl grid-cols-1 gap-3 border-t border-white/20 pt-5 text-sm text-[#fff4df] sm:grid-cols-3">
+                    <div>
+                        <p class="font-bold text-white">Boutique edit</p>
+                        <p class="mt-1 text-[#f5dfb1]">Occasion-ready looks</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-white">Premium fabric</p>
+                        <p class="mt-1 text-[#f5dfb1]">Texture-first curation</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-white">Gift-ready</p>
+                        <p class="mt-1 text-[#f5dfb1]">Packed with care</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
