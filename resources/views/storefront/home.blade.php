@@ -74,24 +74,24 @@
             ]);
     @endphp
 
-    <section class="relative isolate min-h-[460px] overflow-hidden border-b border-[#ead8ba] sm:min-h-[520px] lg:min-h-[560px] xl:min-h-[590px]" data-hero-carousel>
+    <section class="relative isolate min-h-[560px] overflow-hidden border-b border-[#ead8ba] sm:min-h-[620px] lg:min-h-[640px] xl:min-h-[660px]" data-hero-carousel>
         @foreach ($heroSlides as $slide)
             <article class="{{ $loop->first ? 'opacity-100' : 'pointer-events-none opacity-0' }} absolute inset-0 transition-opacity duration-700 ease-out" data-hero-slide>
                 <img src="{{ $slide->image_url }}" alt="{{ $slide->title ?: 'Premium sharee collection' }}" class="absolute inset-0 -z-30 h-full w-full object-cover object-[62%_center] sm:object-center">
                 <div class="absolute inset-0 -z-20 bg-[#2f241f]/58"></div>
                 <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#2f241f]/95 via-[#5c2342]/76 to-[#2f241f]/24"></div>
 
-                <div class="mx-auto flex h-full max-w-7xl items-center px-4 py-12 sm:py-14 lg:py-16">
-                    <div class="w-full max-w-3xl text-white">
+                <div class="mx-auto flex h-full max-w-7xl items-center px-4 py-14 sm:py-16 lg:py-18">
+                    <div class="w-full max-w-4xl text-white">
                         <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-[#f4d885] sm:text-xs">Premium light boutique</p>
-                        <h1 class="mt-5 max-w-3xl font-serif text-4xl font-bold leading-[1.16] text-white drop-shadow-[0_3px_18px_rgba(0,0,0,0.28)] sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl">{{ $slide->headline ?: 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
-                        <p class="mt-6 max-w-2xl text-sm leading-7 text-[#fff4df] sm:text-base sm:leading-8">Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
+                        <h1 class="mt-5 max-w-4xl font-serif text-3xl font-bold leading-[1.16] text-white drop-shadow-[0_3px_18px_rgba(0,0,0,0.28)] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl">{{ $slide->headline ?: 'Elegant Sharee Collections for Every Graceful Occasion' }}</h1>
+                        <p class="mt-6 max-w-3xl text-sm leading-7 text-[#fff4df] sm:text-base sm:leading-8">Rich flat-lay product imagery, fabric closeups, graceful colors, and gift-ready styling keep every product at the center.</p>
                         <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                             <a href="{{ $slide->cta_url ?: route('products.index', ['category' => 'sharee']) }}" class="flex-1 rounded-lg bg-[#8a155b] px-5 py-3 text-center font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-[#6f1047] sm:flex-none sm:px-6">{{ $slide->cta_label ?: 'Shop Sharee' }}</a>
                             <a href="{{ route('offers.index') }}" class="flex-1 rounded-lg border border-[#f4d885] bg-white/10 px-5 py-3 text-center font-semibold text-white backdrop-blur transition hover:bg-white hover:text-[#8a155b] sm:flex-none sm:px-6">View Offers</a>
                         </div>
 
-                        <div class="mt-9 grid max-w-2xl grid-cols-1 gap-3 border-t border-white/20 pt-5 text-xs text-[#fff4df] sm:grid-cols-3 sm:text-sm">
+                        <div class="mt-9 grid max-w-3xl grid-cols-1 gap-3 border-t border-white/20 pt-5 text-xs text-[#fff4df] sm:grid-cols-3 sm:text-sm">
                             <div class="rounded-lg bg-white/8 p-3 ring-1 ring-white/10 sm:bg-transparent sm:p-0 sm:ring-0">
                                 <p class="font-bold text-white">Boutique edit</p>
                                 <p class="mt-1 text-[#f5dfb1]">Occasion-ready looks</p>
