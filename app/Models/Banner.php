@@ -16,8 +16,8 @@ class Banner extends Model
         return [
             'hero' => [
                 'label' => 'Homepage hero banner',
-                'description' => 'Full-width banner at the top of the homepage.',
-                'multiple' => false,
+                'description' => 'Full-width wide banner at the top of the homepage. Recommended image ratio: 21:9.',
+                'multiple' => true,
             ],
         ];
     }

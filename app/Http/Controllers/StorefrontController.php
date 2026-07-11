@@ -21,7 +21,7 @@ class StorefrontController extends Controller
     public function home(): View
     {
         return view('storefront.home', [
-            'hero' => Banner::query()->where('placement', 'hero')->where('is_active', true)->first(),
+            'heroBanners' => Banner::query()->where('placement', 'hero')->where('is_active', true)->latest()->get(),
             'categories' => Category::query()->where('is_active', true)->get(),
             'bestSellers' => Product::query()->active()->with('images')->where('is_best_seller', true)->take(4)->get(),
             'newArrivals' => Product::query()->active()->with('images')->where('is_new_arrival', true)->take(4)->get(),

@@ -83,25 +83,33 @@ test('banner placement uses available dropdown and locks after creation', functi
     $this->actingAs($admin)
         ->get(route('admin.banners.create'))
         ->assertOk()
-        ->assertSee('No placement available')
-        ->assertSee('All single-use banner placements already have banners')
-        ->assertDontSee('<option value="hero"', false);
+        ->assertSee('<option value="hero"', false)
+        ->assertSee('Multiple banners can use this placement');
+
+    $this->actingAs($admin)
+        ->post(route('admin.banners.store'), [
+            'title' => 'Second Hero Banner',
+            'placement' => 'hero',
+            'headline' => 'Second hero headline',
+            'image_url' => 'https://example.com/second-hero.jpg',
+            'is_active' => '1',
+        ])
+        ->assertRedirect(route('admin.banners.index'));
 
     $this->actingAs($admin)
         ->get(route('admin.banners.edit', $heroBanner))
         ->assertOk()
         ->assertSee('Homepage hero banner')
         ->assertSee('Placement is locked after creation')
+        ->assertSee('This placement supports multiple banners')
         ->assertSee('name="placement" value="hero"', false)
         ->assertSee('disabled class=', false);
 
-    Banner::query()->delete();
-
-    $this->actingAs($admin)
-        ->get(route('admin.banners.create'))
+    $this->get(route('home'))
         ->assertOk()
-        ->assertSee('<option value="hero"', false)
-        ->assertSee('Only one banner can use this placement');
+        ->assertSee('Second hero headline')
+        ->assertSee('data-hero-next', false)
+        ->assertSee('data-hero-dot', false);
 });
 
 test('admin can manage announcement bar without default delivery charge field', function () {

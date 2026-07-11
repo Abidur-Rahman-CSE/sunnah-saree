@@ -17,7 +17,7 @@
                     <select disabled class="rounded-lg border border-[#ddd4c4] bg-[#f7f0e4] px-4 py-3 text-[#6f5a50]">
                         <option>{{ $banner->placementLabelText() }}</option>
                     </select>
-                    <span class="mt-1 block text-xs text-[#8d786d]">Placement is locked after creation. This slot supports one banner only.</span>
+                    <span class="mt-1 block text-xs text-[#8d786d]">Placement is locked after creation. {{ ($placements[$banner->placement]['multiple'] ?? false) ? 'This placement supports multiple banners.' : 'This placement supports one banner only.' }}</span>
                 @elseif ($placements)
                     <select name="placement" class="rounded-lg border border-[#ddd4c4] px-4 py-3">
                         @foreach ($placements as $placementKey => $placement)
@@ -35,7 +35,7 @@
                 @endif
             </x-admin.field>
             <x-admin.field label="Image URL" span><input name="image_url" value="{{ old('image_url', $banner->image_url) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Image URL"></x-admin.field>
-            <label class="rounded-lg border border-dashed border-[#cfc3ad] px-4 py-3 text-sm md:col-span-2">Upload banner image<input type="file" name="image_file" accept="image/*" data-image-preview="banner-preview" data-image-preview-shape="wide" class="mt-2 block w-full"><x-admin.image-ratio-guide ratio="16:9" size="1920 x 1080 px" usage="Best for homepage hero and wide storefront banners." shape="wide" /></label>
+            <label class="rounded-lg border border-dashed border-[#cfc3ad] px-4 py-3 text-sm md:col-span-2">Upload banner image<input type="file" name="image_file" accept="image/*" data-image-preview="banner-preview" data-image-preview-shape="wide" class="mt-2 block w-full"><x-admin.image-ratio-guide ratio="21:9" size="2100 x 900 px" usage="Best for the homepage hero under the tall navigation bar." shape="wide" /></label>
             <div class="grid gap-2 md:col-span-2">
                 <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#8a155b]">Image preview</p>
                 <div id="banner-preview" class="grid grid-cols-4 gap-2 md:grid-cols-6">
