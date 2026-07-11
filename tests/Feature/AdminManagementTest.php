@@ -133,7 +133,12 @@ test('admin can upload category image and print invoice', function () {
         ->assertSee('Uttara, Dhaka, Dhaka')
         ->assertSee('Dhaka')
         ->assertSee('Product ID: '.$orderItem->product_id)
-        ->assertSee($orderItem->product->primaryImage());
+        ->assertSee($orderItem->product->primaryImage())
+        ->assertSee('data-product-details-trigger', false)
+        ->assertSee('Go to product')
+        ->assertSee('Go to Edit')
+        ->assertSee(route('products.show', $orderItem->product), false)
+        ->assertSee(route('admin.products.edit', $orderItem->product), false);
 
     $this->actingAs($admin)
         ->get(route('admin.orders.invoice', $order))
@@ -229,12 +234,37 @@ test('admin can upload multiple product images and storefront shows gallery', fu
         ->get(route('admin.products.index'))
         ->assertOk()
         ->assertSee('Admin Gallery Product')
+        ->assertSee('#'.$product->id)
         ->assertSee('/storage/products/', false);
+
+    $this->actingAs($admin)
+        ->get(route('admin.products.index', ['search' => (string) $product->id]))
+        ->assertOk()
+        ->assertSee('Admin Gallery Product');
 
     $this->get(route('products.show', $product))
         ->assertOk()
         ->assertSee('product-main-image')
         ->assertSee('data-gallery-image', false);
+});
+
+test('admin product list defaults to active products', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+    $inactiveProduct = Product::query()->firstOrFail();
+    $inactiveProduct->update(['is_active' => false]);
+
+    $this->actingAs($admin)
+        ->get(route('admin.products.index'))
+        ->assertOk()
+        ->assertSee('value="active" selected', false)
+        ->assertDontSee($inactiveProduct->name);
+
+    $this->actingAs($admin)
+        ->get(route('admin.products.index', ['status' => '']))
+        ->assertOk()
+        ->assertSee($inactiveProduct->name);
 });
 
 test('admin product slug and sku are generated from name when left blank', function () {
