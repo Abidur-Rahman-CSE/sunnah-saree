@@ -72,8 +72,20 @@
                     'image_url' => 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=1800&q=80',
                 ],
             ]);
+        $homeSections = [
+            'hero' => \App\Models\Setting::valueFor('home_section_hero_enabled', '1') === '1',
+            'sharee_types' => \App\Models\Setting::valueFor('home_section_sharee_types_enabled', '1') === '1',
+            'colors' => \App\Models\Setting::valueFor('home_section_colors_enabled', '1') === '1',
+            'best_sellers' => \App\Models\Setting::valueFor('home_section_best_sellers_enabled', '1') === '1',
+            'new_arrivals' => \App\Models\Setting::valueFor('home_section_new_arrivals_enabled', '1') === '1',
+            'collections' => \App\Models\Setting::valueFor('home_section_collections_enabled', '1') === '1',
+            'essentials' => \App\Models\Setting::valueFor('home_section_essentials_enabled', '1') === '1',
+            'promo_banners' => \App\Models\Setting::valueFor('home_section_promo_banners_enabled', '1') === '1',
+            'trust' => \App\Models\Setting::valueFor('home_section_trust_enabled', '1') === '1',
+        ];
     @endphp
 
+    @if ($homeSections['hero'])
     <section class="relative isolate min-h-[520px] overflow-hidden border-b border-[#ead8ba] sm:min-h-[620px] lg:min-h-[640px] xl:min-h-[660px]" data-hero-carousel>
         @foreach ($heroSlides as $slide)
             <article class="{{ $loop->first ? 'opacity-100' : 'pointer-events-none opacity-0' }} absolute inset-0 transition-opacity duration-700 ease-out" data-hero-slide>
@@ -194,7 +206,9 @@
             })();
         </script>
     @endif
+    @endif
 
+    @if ($homeSections['sharee_types'])
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Find Your Perfect Weave" subtitle="Curated for every occasion and style." />
         <div class="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -206,7 +220,9 @@
             @endforeach
         </div>
     </section>
+    @endif
 
+    @if ($homeSections['colors'])
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Colors That Celebrate You" subtitle="Explore shades that suit every mood." />
         <div class="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11">
@@ -218,7 +234,9 @@
             @endforeach
         </div>
     </section>
+    @endif
 
+    @if ($homeSections['best_sellers'])
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Best Sellers" subtitle="Customer favorites handpicked from our premium sharee edits." />
         <div class="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
@@ -227,7 +245,9 @@
             @endforeach
         </div>
     </section>
+    @endif
 
+    @if ($homeSections['new_arrivals'])
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Fresh Weaves, Just for You" subtitle="New designs. Fresh colors. Ready to fall in love." />
         <div class="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
@@ -236,7 +256,9 @@
             @endforeach
         </div>
     </section>
+    @endif
 
+    @if ($homeSections['collections'])
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Curated Collections for Every Occasion" subtitle="Handpicked selections just for you." />
         <div class="mt-6 flex snap-x gap-4 overflow-x-auto pb-3 lg:grid lg:grid-cols-6 lg:overflow-visible lg:pb-0">
@@ -253,7 +275,9 @@
             @endforeach
         </div>
     </section>
+    @endif
 
+    @if ($homeSections['essentials'])
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="More from Sunnah Sharee Ghar" subtitle="Secondary boutique essentials selected to complement your sharee shopping." />
         <div class="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
@@ -274,7 +298,9 @@
             @endforeach
         </div>
     </section>
+    @endif
 
+    @if ($homeSections['promo_banners'])
     <section class="mx-auto grid max-w-7xl gap-5 px-4 py-8 lg:grid-cols-2">
         <div class="relative overflow-hidden rounded-lg bg-[#8a155b] p-8 text-white shadow-[0_14px_36px_rgba(122,31,85,0.22)]">
             <div class="relative z-10">
@@ -291,7 +317,9 @@
             <a href="{{ route('combos.index') }}" class="mt-6 inline-block rounded-lg bg-[#8a155b] px-5 py-3 text-sm font-bold text-white">View Combos</a>
         </div>
     </section>
+    @endif
 
+    @if ($homeSections['trust'])
     <section class="mx-auto max-w-7xl px-4 py-8">
         <x-section-title title="Trusted by Thousands, Loved for Quality" subtitle="Premium quality, elegant designs, and service you can trust." />
         <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
@@ -310,4 +338,5 @@
             @endforeach
         </div>
     </section>
+    @endif
 @endsection

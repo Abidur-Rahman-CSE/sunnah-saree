@@ -200,6 +200,15 @@ class DatabaseSeeder extends Seeder
             'free_delivery_minimum_amount' => '5000',
             'cod_enabled' => '1',
             'online_payment_enabled' => '1',
+            'home_section_hero_enabled' => '1',
+            'home_section_sharee_types_enabled' => '1',
+            'home_section_colors_enabled' => '1',
+            'home_section_best_sellers_enabled' => '1',
+            'home_section_new_arrivals_enabled' => '1',
+            'home_section_collections_enabled' => '1',
+            'home_section_essentials_enabled' => '1',
+            'home_section_promo_banners_enabled' => '1',
+            'home_section_trust_enabled' => '1',
         ])->each(fn (string $value, string $key): mixed => Setting::query()->updateOrCreate(['key' => $key], ['value' => $value]));
     }
 }

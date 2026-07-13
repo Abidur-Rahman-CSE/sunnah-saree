@@ -133,6 +133,15 @@ test('admin can manage announcement bar without default delivery charge field', 
             'free_delivery_minimum_amount' => '5000',
             'cod_enabled' => '1',
             'online_payment_enabled' => '1',
+            'home_section_hero_enabled' => '1',
+            'home_section_sharee_types_enabled' => '1',
+            'home_section_colors_enabled' => '1',
+            'home_section_best_sellers_enabled' => '1',
+            'home_section_new_arrivals_enabled' => '1',
+            'home_section_collections_enabled' => '1',
+            'home_section_essentials_enabled' => '1',
+            'home_section_promo_banners_enabled' => '1',
+            'home_section_trust_enabled' => '1',
             'address' => 'Dhaka, Bangladesh',
         ])
         ->assertRedirect(route('admin.settings.edit'));
@@ -144,6 +153,50 @@ test('admin can manage announcement bar without default delivery charge field', 
         ->assertSee('Fast delivery in Dhaka')
         ->assertSee('Cash on delivery')
         ->assertSee('Easy exchange support');
+});
+
+test('admin can toggle home page sections', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+
+    $this->actingAs($admin)
+        ->get(route('admin.settings.edit'))
+        ->assertOk()
+        ->assertSee('Home Page Sections')
+        ->assertSee('Best sellers')
+        ->assertSee('Trust cards');
+
+    $this->actingAs($admin)
+        ->put(route('admin.settings.update'), [
+            'website_name' => 'Sunnah Sharee Ghar',
+            'phone' => '01985902350',
+            'whatsapp' => '01985902350',
+            'email' => 'care@sunnahshareeghar.com',
+            'facebook_page_link' => 'https://www.facebook.com/sunnah.saree',
+            'announcement_bar_text' => 'Free delivery over ৳5,000 • Cash on delivery available',
+            'free_delivery_minimum_amount' => '5000',
+            'cod_enabled' => '1',
+            'online_payment_enabled' => '1',
+            'home_section_hero_enabled' => '1',
+            'home_section_sharee_types_enabled' => '1',
+            'home_section_colors_enabled' => '1',
+            'home_section_new_arrivals_enabled' => '1',
+            'home_section_collections_enabled' => '1',
+            'home_section_essentials_enabled' => '1',
+            'home_section_promo_banners_enabled' => '1',
+            'home_section_trust_enabled' => '1',
+            'address' => 'Dhaka, Bangladesh',
+        ])
+        ->assertRedirect(route('admin.settings.edit'));
+
+    expect(Setting::valueFor('home_section_best_sellers_enabled'))->toBe('0');
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertDontSee('Best Sellers')
+        ->assertSee('Fresh Weaves, Just for You')
+        ->assertSee('Trusted by Thousands, Loved for Quality');
 });
 
 test('admin can upload category image and print invoice', function () {
