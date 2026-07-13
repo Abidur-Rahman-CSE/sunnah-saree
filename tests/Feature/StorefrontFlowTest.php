@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Cart;
 use App\Models\Category;
 use App\Models\DeliveryChargeRule;
 use App\Models\Product;
@@ -215,6 +216,40 @@ test('add to cart can update the navbar count without leaving the page', functio
         'product_id' => $product->id,
         'quantity' => 2,
     ]);
+});
+
+test('navbar cart count uses the current logged in session cart after reload', function () {
+    $this->seed();
+
+    $user = User::query()->where('role', 'customer')->firstOrFail();
+    $product = Product::query()->firstOrFail();
+
+    $oldCart = Cart::query()->create([
+        'user_id' => $user->id,
+        'session_id' => 'old-session',
+    ]);
+    $oldCart->items()->create([
+        'product_id' => $product->id,
+        'product_variant_id' => null,
+        'quantity' => 1,
+    ]);
+
+    $currentCart = Cart::query()->create([
+        'user_id' => $user->id,
+        'session_id' => 'current-session',
+    ]);
+    $currentCart->items()->create([
+        'product_id' => $product->id,
+        'product_variant_id' => null,
+        'quantity' => 3,
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['cart_session_id' => 'current-session'])
+        ->get('/')
+        ->assertOk()
+        ->assertSee('data-cart-count>3</span>', false)
+        ->assertDontSee('data-cart-count>1</span>', false);
 });
 
 test('admin can access the dashboard', function () {

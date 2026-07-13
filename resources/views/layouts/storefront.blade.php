@@ -36,6 +36,10 @@
 
         if (auth()->check()) {
             $cartQuery->where('user_id', auth()->id());
+
+            if ($cartSessionId) {
+                $cartQuery->where('session_id', $cartSessionId);
+            }
         } elseif ($cartSessionId) {
             $cartQuery->where('session_id', $cartSessionId);
         } else {
