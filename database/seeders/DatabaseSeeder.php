@@ -193,6 +193,7 @@ class DatabaseSeeder extends Seeder
             'phone' => '01985902350',
             'whatsapp' => '01985902350',
             'email' => 'care@sunnahshareeghar.com',
+            'facebook_page_link' => 'https://www.facebook.com/sunnah.saree',
             'address' => 'Dhaka, Bangladesh',
             'delivery_charge' => '80',
             'announcement_bar_text' => 'Free delivery over ৳5,000 • Cash on delivery available • Easy return support',

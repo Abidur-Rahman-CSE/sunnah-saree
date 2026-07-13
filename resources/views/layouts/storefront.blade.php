@@ -80,6 +80,8 @@
         $dropdownLinkClass = 'block rounded-lg px-3 py-2.5 transition hover:bg-[#fff6e8] hover:text-[#8a155b]';
         $storePhone = \App\Models\Setting::valueFor('phone', '01985902350');
         $storeWhatsapp = \App\Models\Setting::valueFor('whatsapp', $storePhone);
+        $storeFacebookUrl = \App\Models\Setting::valueFor('facebook_page_link', 'https://www.facebook.com/sunnah.saree') ?: 'https://www.facebook.com/sunnah.saree';
+        $storeMessengerUrl = 'https://m.me/sunnah.saree';
         $storeWhatsappDigits = preg_replace('/\D+/', '', (string) $storeWhatsapp);
 
         if (str_starts_with($storeWhatsappDigits, '0')) {
@@ -229,8 +231,12 @@
                         {{ $storePhone }}
                     </a>
                     <a class="inline-flex items-center gap-2 transition hover:text-[#8a155b]" href="https://wa.me/{{ $storeWhatsappDigits }}" target="_blank" rel="noopener">
-                        <x-storefront.icon name="message-circle" class="h-4 w-4 text-[#8a155b]" />
-                        WhatsApp {{ $storeWhatsapp }}
+                        <x-storefront.icon name="whatsapp" class="h-4 w-4 text-[#18a957]" />
+                        {{ $storeWhatsapp }}
+                    </a>
+                    <a class="inline-flex items-center gap-2 transition hover:text-[#8a155b]" href="{{ $storeFacebookUrl }}" target="_blank" rel="noopener">
+                        <x-storefront.icon name="facebook" class="h-4 w-4 text-[#1877f2]" />
+                        Facebook
                     </a>
                 </div>
             </div>
@@ -261,6 +267,50 @@
             </form>
         </div>
     </footer>
+
+    <div class="fixed bottom-4 right-4 z-50 flex flex-col items-end sm:bottom-6 sm:right-6" data-chat-widget>
+        <div class="mb-3 hidden w-[calc(100vw-2rem)] max-w-xs rounded-lg border border-[#ead8ba] bg-[#fffaf4] p-3 shadow-2xl shadow-[#7a1f55]/20 sm:w-80" data-chat-panel>
+            <button type="button" class="absolute -top-3 right-2 grid h-8 w-8 place-items-center rounded-full border border-[#ead8ba] bg-white text-[#8d786d] shadow-lg transition hover:text-[#8a155b]" data-chat-close aria-label="Close chat">
+                <span class="text-2xl leading-none">&times;</span>
+            </button>
+            <div class="text-center">
+                <div class="mx-auto grid h-10 w-10 place-items-center rounded-full bg-white text-2xl shadow-sm ring-1 ring-[#ead8ba]">👋</div>
+                <h2 class="mt-2 font-serif text-lg font-bold leading-snug text-[#2f241f]">যেকোনো জিজ্ঞাসায় সরাসরি আমাদের সাথে</h2>
+            </div>
+            <div class="mt-3 grid gap-2">
+                <a href="{{ $storeMessengerUrl }}" target="_blank" rel="noopener" class="flex items-center gap-2.5 rounded-lg border border-[#ead8ba] bg-white p-2.5 text-left text-[#4f3d35] shadow-[0_2px_0_#ead8ba] transition hover:-translate-y-0.5 hover:border-[#8a155b]">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#fff6e8] text-[#8a155b]">
+                        <x-storefront.icon name="messenger" class="h-5 w-5" />
+                    </span>
+                    <span class="text-sm font-extrabold leading-tight">Messenger-এ মেসেজ করুন</span>
+                </a>
+                <a href="https://wa.me/{{ $storeWhatsappDigits }}" target="_blank" rel="noopener" class="flex items-center gap-2.5 rounded-lg border border-[#ead8ba] bg-white p-2.5 text-left text-[#4f3d35] shadow-[0_2px_0_#ead8ba] transition hover:-translate-y-0.5 hover:border-[#8a155b]">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#effaf3] text-[#18a957]">
+                        <x-storefront.icon name="whatsapp" class="h-5 w-5" />
+                    </span>
+                    <span class="text-sm font-extrabold leading-tight">WhatsApp-এ মেসেজ করুন</span>
+                </a>
+                <a href="tel:{{ $storePhone }}" class="flex items-center gap-2.5 rounded-lg border border-[#ead8ba] bg-white p-2.5 text-left text-[#4f3d35] shadow-[0_2px_0_#ead8ba] transition hover:-translate-y-0.5 hover:border-[#8a155b]">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#fff6e8] text-[#8a155b]">
+                        <x-storefront.icon name="phone" class="h-5 w-5" />
+                    </span>
+                    <span class="text-sm font-extrabold leading-tight">কল করুন {{ $storePhone }}</span>
+                </a>
+                <a href="{{ $storeFacebookUrl }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#ead8ba] bg-[#2f241f] px-3 py-2 text-sm font-bold text-white shadow-lg transition hover:bg-[#8a155b]">
+                    <x-storefront.icon name="facebook" class="h-4 w-4" />
+                    Facebook Page
+                </a>
+            </div>
+        </div>
+        <button type="button" class="inline-flex min-w-[11rem] items-center justify-center gap-2 rounded-l-full rounded-br-none rounded-tr-full bg-gradient-to-r from-[#7a1f55] to-[#a3166b] px-3 py-2 text-sm font-extrabold text-white shadow-xl shadow-[#7a1f55]/25 ring-1 ring-[#d8b879]/40 transition hover:-translate-y-0.5 hover:shadow-2xl sm:min-w-[14rem] sm:px-5 sm:py-3 sm:text-base" data-chat-toggle aria-expanded="false">
+            <span class="grid h-7 w-7 place-items-center rounded-full bg-white/15 sm:h-8 sm:w-8" data-chat-phone-icon>
+                <x-storefront.icon name="phone" class="h-4 w-4 sm:h-5 sm:w-5" />
+            </span>
+            <span data-chat-toggle-text>সরাসরি কথা বলুন</span>
+            <span class="hidden text-xl leading-none" data-chat-toggle-arrow>∨</span>
+        </button>
+    </div>
+
     <script>
         document.querySelectorAll('[data-mobile-menu-toggle]').forEach((button) => {
             button.addEventListener('click', () => {
@@ -362,6 +412,54 @@
                     }, 900);
                 } catch (error) {
                     form.submit();
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-chat-widget]').forEach((widget) => {
+            const panel = widget.querySelector('[data-chat-panel]');
+            const toggle = widget.querySelector('[data-chat-toggle]');
+            const close = widget.querySelector('[data-chat-close]');
+            const phoneIcon = widget.querySelector('[data-chat-phone-icon]');
+            const toggleText = widget.querySelector('[data-chat-toggle-text]');
+            const toggleArrow = widget.querySelector('[data-chat-toggle-arrow]');
+
+            const setChatOpen = (isOpen) => {
+                panel?.classList.toggle('hidden', ! isOpen);
+                toggle?.setAttribute('aria-expanded', String(isOpen));
+                toggle?.classList.toggle('min-w-[11rem]', ! isOpen);
+                toggle?.classList.toggle('sm:min-w-[14rem]', ! isOpen);
+                toggle?.classList.toggle('w-11', isOpen);
+                toggle?.classList.toggle('h-11', isOpen);
+                toggle?.classList.toggle('sm:w-12', isOpen);
+                toggle?.classList.toggle('sm:h-12', isOpen);
+                toggle?.classList.toggle('px-3', ! isOpen);
+                toggle?.classList.toggle('py-2', ! isOpen);
+                toggle?.classList.toggle('sm:px-5', ! isOpen);
+                toggle?.classList.toggle('sm:py-3', ! isOpen);
+                toggle?.classList.toggle('p-0', isOpen);
+                phoneIcon?.classList.toggle('hidden', isOpen);
+                toggleText?.classList.toggle('hidden', isOpen);
+                toggleArrow?.classList.toggle('hidden', ! isOpen);
+            };
+
+            toggle?.addEventListener('click', () => {
+                setChatOpen(panel?.classList.contains('hidden') ?? true);
+            });
+
+            close?.addEventListener('click', () => setChatOpen(false));
+
+            document.addEventListener('click', (event) => {
+                if (panel?.classList.contains('hidden') || widget.contains(event.target)) {
+                    return;
+                }
+
+                setChatOpen(false);
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    setChatOpen(false);
                 }
             });
         });

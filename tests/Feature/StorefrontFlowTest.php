@@ -177,6 +177,18 @@ test('footer links to customer policy pages and pages show saved policy text', f
         ->assertSee('Return within 3 days after receiving the parcel.');
 });
 
+test('storefront shows floating chat widget with messenger whatsapp and phone links', function () {
+    $this->seed();
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('সরাসরি কথা বলুন')
+        ->assertSee('https://m.me/sunnah.saree', false)
+        ->assertSee('https://wa.me/8801985902350', false)
+        ->assertSee('tel:01985902350', false)
+        ->assertSee('https://www.facebook.com/sunnah.saree', false);
+});
+
 test('home essentials hide inactive categories', function () {
     $this->seed();
 
