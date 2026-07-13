@@ -24,6 +24,7 @@
                     <x-admin.check label="Collections"><input type="checkbox" name="home_section_collections_enabled" value="1" @checked(old('home_section_collections_enabled', ($settings['home_section_collections_enabled'] ?? '1') === '1'))></x-admin.check>
                     <x-admin.check label="More essentials"><input type="checkbox" name="home_section_essentials_enabled" value="1" @checked(old('home_section_essentials_enabled', ($settings['home_section_essentials_enabled'] ?? '1') === '1'))></x-admin.check>
                     <x-admin.check label="Offer and combo banners"><input type="checkbox" name="home_section_promo_banners_enabled" value="1" @checked(old('home_section_promo_banners_enabled', ($settings['home_section_promo_banners_enabled'] ?? '1') === '1'))></x-admin.check>
+                    <x-admin.check label="Testimonials"><input type="checkbox" name="home_section_testimonials_enabled" value="1" @checked(old('home_section_testimonials_enabled', ($settings['home_section_testimonials_enabled'] ?? '1') === '1'))></x-admin.check>
                     <x-admin.check label="Trust cards"><input type="checkbox" name="home_section_trust_enabled" value="1" @checked(old('home_section_trust_enabled', ($settings['home_section_trust_enabled'] ?? '1') === '1'))></x-admin.check>
                 </div>
             </div>

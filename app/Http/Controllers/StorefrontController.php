@@ -9,6 +9,7 @@ use App\Models\Combo;
 use App\Models\FashionAttribute;
 use App\Models\Offer;
 use App\Models\Product;
+use App\Models\Testimonial;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -28,6 +29,7 @@ class StorefrontController extends Controller
             'collections' => Collection::query()->where('is_active', true)->where('is_featured', true)->take(6)->get(),
             'offers' => Offer::query()->where('is_active', true)->with('products.images')->take(2)->get(),
             'combos' => Combo::query()->where('is_active', true)->with('items.product.images')->take(3)->get(),
+            'testimonials' => Testimonial::query()->where('is_active', true)->orderBy('sort_order')->latest()->take(6)->get(),
             'colorOptions' => $this->colorOptions(),
         ]);
     }
@@ -141,6 +143,13 @@ class StorefrontController extends Controller
     {
         return view('storefront.combos', [
             'combos' => Combo::query()->where('is_active', true)->with('items.product.images')->get(),
+        ]);
+    }
+
+    public function testimonials(): View
+    {
+        return view('storefront.testimonials', [
+            'testimonials' => Testimonial::query()->where('is_active', true)->orderBy('sort_order')->latest()->paginate(12),
         ]);
     }
 

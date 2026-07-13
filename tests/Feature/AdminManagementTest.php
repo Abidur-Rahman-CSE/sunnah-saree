@@ -9,6 +9,7 @@ use App\Models\Offer;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -30,6 +31,7 @@ test('admin can open remaining management modules', function () {
         route('admin.combos.index') => 'Combos',
         route('admin.coupons.index') => 'Coupons',
         route('admin.banners.index') => 'Banners',
+        route('admin.testimonials.index') => 'Testimonials',
         route('admin.customers.index') => 'Customers',
         route('admin.payments.index') => 'Payments',
         route('admin.delivery-charge-rules.index') => 'Delivery Rules',
@@ -141,6 +143,7 @@ test('admin can manage announcement bar without default delivery charge field', 
             'home_section_collections_enabled' => '1',
             'home_section_essentials_enabled' => '1',
             'home_section_promo_banners_enabled' => '1',
+            'home_section_testimonials_enabled' => '1',
             'home_section_trust_enabled' => '1',
             'address' => 'Dhaka, Bangladesh',
         ])
@@ -165,6 +168,7 @@ test('admin can toggle home page sections', function () {
         ->assertOk()
         ->assertSee('Home Page Sections')
         ->assertSee('Best sellers')
+        ->assertSee('Testimonials')
         ->assertSee('Trust cards');
 
     $this->actingAs($admin)
@@ -185,6 +189,7 @@ test('admin can toggle home page sections', function () {
             'home_section_collections_enabled' => '1',
             'home_section_essentials_enabled' => '1',
             'home_section_promo_banners_enabled' => '1',
+            'home_section_testimonials_enabled' => '1',
             'home_section_trust_enabled' => '1',
             'address' => 'Dhaka, Bangladesh',
         ])
@@ -197,6 +202,45 @@ test('admin can toggle home page sections', function () {
         ->assertDontSee('Best Sellers')
         ->assertSee('Fresh Weaves, Just for You')
         ->assertSee('Trusted by Thousands, Loved for Quality');
+});
+
+test('admin can manage testimonials and storefront shows active testimonials', function () {
+    Storage::fake('public');
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+
+    $this->actingAs($admin)
+        ->post(route('admin.testimonials.store'), [
+            'customer_name' => 'Happy Customer',
+            'message' => 'Excellent quality and service.',
+            'facebook_post_url' => 'https://www.facebook.com/sunnah.saree/posts/123',
+            'image_file' => UploadedFile::fake()->image('testimonial.jpg', 1200, 900),
+            'sort_order' => 1,
+            'is_active' => '1',
+        ])
+        ->assertRedirect(route('admin.testimonials.index'));
+
+    $testimonial = Testimonial::query()->where('customer_name', 'Happy Customer')->firstOrFail();
+
+    expect($testimonial->image_url)->not->toBeNull();
+
+    $this->actingAs($admin)
+        ->get(route('admin.testimonials.edit', $testimonial))
+        ->assertOk()
+        ->assertSee('Happy Customer')
+        ->assertSee('https://www.facebook.com/sunnah.saree/posts/123');
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('Customer Stories')
+        ->assertSee('Happy Customer')
+        ->assertSee('https://www.facebook.com/sunnah.saree/posts/123', false);
+
+    $this->get(route('testimonials.index'))
+        ->assertOk()
+        ->assertSee('Testimonials')
+        ->assertSee('Happy Customer');
 });
 
 test('admin can upload category image and print invoice', function () {

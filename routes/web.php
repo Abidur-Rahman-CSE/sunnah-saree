@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Auth\CustomerAuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
@@ -30,6 +31,7 @@ Route::get('/collections/{collection:slug}', [StorefrontController::class, 'coll
 Route::get('/offers', [StorefrontController::class, 'offers'])->name('offers.index');
 Route::get('/offers/{offer:slug}', [StorefrontController::class, 'offer'])->name('offers.show');
 Route::get('/combos', [StorefrontController::class, 'combos'])->name('combos.index');
+Route::get('/testimonials', [StorefrontController::class, 'testimonials'])->name('testimonials.index');
 Route::get('/pages/{page}', [StorefrontController::class, 'staticPage'])->name('pages.show');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -76,6 +78,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('combos', ComboController::class);
     Route::resource('coupons', CouponController::class);
     Route::resource('banners', BannerController::class);
+    Route::resource('testimonials', TestimonialController::class);
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');

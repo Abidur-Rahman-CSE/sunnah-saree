@@ -10,6 +10,7 @@ use App\Models\FashionAttribute;
 use App\Models\Offer;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -177,6 +178,54 @@ class DatabaseSeeder extends Seeder
         $combo->items()->firstOrCreate(['product_id' => $products->first()->id], ['quantity' => 1]);
         $combo->items()->firstOrCreate(['product_id' => $products->last()->id], ['quantity' => 1]);
 
+        collect([
+            [
+                'customer_name' => 'Nusrat Jahan',
+                'message' => 'Sharee quality onek bhalo, packaging-o gift ready chilo.',
+                'image_url' => 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=80',
+                'facebook_post_url' => 'https://www.facebook.com/sunnah.saree',
+                'sort_order' => 1,
+            ],
+            [
+                'customer_name' => 'Farhana Akter',
+                'message' => 'Delivery fast chilo, color picture er motoi peyechi.',
+                'image_url' => 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=900&q=80',
+                'facebook_post_url' => null,
+                'sort_order' => 2,
+            ],
+            [
+                'customer_name' => 'Mst. Jannatul',
+                'message' => 'Fabric soft and comfortable. Eid er jonno perfect choice.',
+                'image_url' => 'https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?auto=format&fit=crop&w=900&q=80',
+                'facebook_post_url' => 'https://www.facebook.com/sunnah.saree',
+                'sort_order' => 3,
+            ],
+            [
+                'customer_name' => 'Samia Rahman',
+                'message' => 'Customer support khub helpful. Size and color niye clear guidance peyechi.',
+                'image_url' => 'https://images.unsplash.com/photo-1595341595379-cf1cd0fb7fb3?auto=format&fit=crop&w=900&q=80',
+                'facebook_post_url' => null,
+                'sort_order' => 4,
+            ],
+            [
+                'customer_name' => 'Rumana Islam',
+                'message' => 'Gift packaging sundor chilo. Family te sobai pochondo koreche.',
+                'image_url' => 'https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=900&q=80',
+                'facebook_post_url' => 'https://www.facebook.com/sunnah.saree',
+                'sort_order' => 5,
+            ],
+            [
+                'customer_name' => 'Tahmina Sultana',
+                'message' => 'Price er tulonay quality onek bhalo. Abar order korbo in sha Allah.',
+                'image_url' => 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=80',
+                'facebook_post_url' => null,
+                'sort_order' => 6,
+            ],
+        ])->each(fn (array $testimonial): Testimonial => Testimonial::query()->firstOrCreate(
+            ['customer_name' => $testimonial['customer_name']],
+            [...$testimonial, 'is_active' => true],
+        ));
+
         Banner::query()->firstOrCreate(
             ['placement' => 'hero'],
             [
@@ -208,6 +257,7 @@ class DatabaseSeeder extends Seeder
             'home_section_collections_enabled' => '1',
             'home_section_essentials_enabled' => '1',
             'home_section_promo_banners_enabled' => '1',
+            'home_section_testimonials_enabled' => '1',
             'home_section_trust_enabled' => '1',
         ])->each(fn (string $value, string $key): mixed => Setting::query()->updateOrCreate(['key' => $key], ['value' => $value]));
     }

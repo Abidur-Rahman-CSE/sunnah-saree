@@ -22,6 +22,7 @@
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.combos.index') }}">Combos</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.coupons.index') }}">Coupons</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.banners.index') }}">Banners</a>
+                <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.testimonials.index') }}">Testimonials</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.orders.index') }}">Orders</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.customers.index') }}">Customers</a>
                 <a class="rounded-lg px-3 py-2 hover:bg-[#f7f0e4]" href="{{ route('admin.payments.index') }}">Payments</a>

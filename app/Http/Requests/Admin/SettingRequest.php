@@ -41,6 +41,7 @@ class SettingRequest extends FormRequest
             'home_section_collections_enabled' => ['nullable', 'boolean'],
             'home_section_essentials_enabled' => ['nullable', 'boolean'],
             'home_section_promo_banners_enabled' => ['nullable', 'boolean'],
+            'home_section_testimonials_enabled' => ['nullable', 'boolean'],
             'home_section_trust_enabled' => ['nullable', 'boolean'],
             'return_policy_text' => ['nullable', 'string'],
             'shipping_policy_text' => ['nullable', 'string'],

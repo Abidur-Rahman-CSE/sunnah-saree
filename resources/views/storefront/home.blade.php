@@ -81,6 +81,7 @@
             'collections' => \App\Models\Setting::valueFor('home_section_collections_enabled', '1') === '1',
             'essentials' => \App\Models\Setting::valueFor('home_section_essentials_enabled', '1') === '1',
             'promo_banners' => \App\Models\Setting::valueFor('home_section_promo_banners_enabled', '1') === '1',
+            'testimonials' => \App\Models\Setting::valueFor('home_section_testimonials_enabled', '1') === '1',
             'trust' => \App\Models\Setting::valueFor('home_section_trust_enabled', '1') === '1',
         ];
     @endphp
@@ -317,6 +318,151 @@
             <a href="{{ route('combos.index') }}" class="mt-6 inline-block rounded-lg bg-[#8a155b] px-5 py-3 text-sm font-bold text-white">View Combos</a>
         </div>
     </section>
+    @endif
+
+    @if ($homeSections['testimonials'] && $testimonials->isNotEmpty())
+    <section class="mx-auto max-w-7xl px-4 py-8" data-testimonial-carousel>
+        <div class="flex items-end justify-between gap-4">
+            <x-section-title title="Customer Stories" subtitle="Real feedback from Sunnah Sharee shoppers." />
+            <div class="hidden items-center gap-2 sm:flex">
+                <button type="button" class="grid h-10 w-10 place-items-center rounded-full border border-[#d8b879] bg-white text-xl font-bold text-[#8a155b] transition hover:bg-[#8a155b] hover:text-white" data-testimonial-prev aria-label="Previous testimonial">‹</button>
+                <button type="button" class="grid h-10 w-10 place-items-center rounded-full border border-[#d8b879] bg-white text-xl font-bold text-[#8a155b] transition hover:bg-[#8a155b] hover:text-white" data-testimonial-next aria-label="Next testimonial">›</button>
+                <a href="{{ route('testimonials.index') }}" class="rounded-lg border border-[#d8b879] px-4 py-2 text-sm font-bold text-[#8a155b] transition hover:bg-[#8a155b] hover:text-white">View More</a>
+            </div>
+        </div>
+        <div class="relative mt-6">
+            <button type="button" class="absolute left-0 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-[#d8b879] bg-white/95 text-2xl font-bold text-[#8a155b] shadow-lg transition hover:bg-[#8a155b] hover:text-white md:grid" data-testimonial-prev aria-label="Previous testimonial">‹</button>
+            <div class="flex items-center justify-center gap-4 overflow-hidden py-4">
+                @foreach ($testimonials as $testimonial)
+                    @php
+                        $initialState = $loop->first ? 'is-active' : ($loop->iteration <= 3 ? 'is-side' : 'is-hidden');
+                        $testimonialCardClass = 'group testimonial-carousel-card overflow-hidden rounded-lg border border-[#ead8ba] bg-white shadow-sm transition-all duration-500 hover:shadow-lg '.$initialState;
+                    @endphp
+                    @if ($testimonial->facebook_post_url)
+                        <a href="{{ $testimonial->facebook_post_url }}" target="_blank" rel="noopener" class="{{ $testimonialCardClass }}" data-testimonial-card data-testimonial-index="{{ $loop->index }}">
+                            @include('storefront.partials.testimonial-card', ['testimonial' => $testimonial])
+                        </a>
+                    @else
+                        <article class="{{ $testimonialCardClass }}" data-testimonial-card data-testimonial-index="{{ $loop->index }}">
+                            @include('storefront.partials.testimonial-card', ['testimonial' => $testimonial])
+                        </article>
+                    @endif
+                @endforeach
+            </div>
+            <button type="button" class="absolute right-0 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-[#d8b879] bg-white/95 text-2xl font-bold text-[#8a155b] shadow-lg transition hover:bg-[#8a155b] hover:text-white md:grid" data-testimonial-next aria-label="Next testimonial">›</button>
+        </div>
+        <div class="mt-2 flex items-center justify-center gap-2">
+            @foreach ($testimonials as $testimonial)
+                <button type="button" class="{{ $loop->first ? 'w-6 bg-[#8a155b]' : 'w-2 bg-[#d8b879]' }} h-2 rounded-full transition-all" data-testimonial-dot aria-label="Show testimonial {{ $loop->iteration }}"></button>
+            @endforeach
+        </div>
+        <div class="mt-4 flex items-center justify-center gap-2 sm:hidden">
+            <button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-[#d8b879] bg-white text-lg font-bold text-[#8a155b]" data-testimonial-prev aria-label="Previous testimonial">‹</button>
+            <a href="{{ route('testimonials.index') }}" class="rounded-lg border border-[#d8b879] px-4 py-2 text-sm font-bold text-[#8a155b] transition hover:bg-[#8a155b] hover:text-white">View More</a>
+            <button type="button" class="grid h-9 w-9 place-items-center rounded-full border border-[#d8b879] bg-white text-lg font-bold text-[#8a155b]" data-testimonial-next aria-label="Next testimonial">›</button>
+        </div>
+    </section>
+    <style>
+        .testimonial-carousel-card.is-active {
+            display: block;
+            order: 2;
+            width: min(100%, 28rem);
+            transform: scale(1);
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .testimonial-carousel-card.is-side {
+            display: none;
+            order: 1;
+            width: 15rem;
+            transform: scale(.9);
+            opacity: .68;
+            z-index: 1;
+        }
+
+        .testimonial-carousel-card.is-side-next {
+            order: 3;
+        }
+
+        .testimonial-carousel-card.is-hidden {
+            display: none;
+        }
+
+        @media (min-width: 640px) {
+            .testimonial-carousel-card.is-side {
+                display: block;
+            }
+        }
+    </style>
+    <script>
+        (() => {
+            const carousel = document.querySelector('[data-testimonial-carousel]');
+
+            if (! carousel) {
+                return;
+            }
+
+            const cards = Array.from(carousel.querySelectorAll('[data-testimonial-card]'));
+            const dots = Array.from(carousel.querySelectorAll('[data-testimonial-dot]'));
+            const previousButtons = carousel.querySelectorAll('[data-testimonial-prev]');
+            const nextButtons = carousel.querySelectorAll('[data-testimonial-next]');
+            let activeIndex = 0;
+            let timer = null;
+
+            const showTestimonial = (nextIndex) => {
+                activeIndex = (nextIndex + cards.length) % cards.length;
+                const previousIndex = (activeIndex - 1 + cards.length) % cards.length;
+                const nextCardIndex = (activeIndex + 1) % cards.length;
+
+                cards.forEach((card, index) => {
+                    card.classList.toggle('is-active', index === activeIndex);
+                    card.classList.toggle('is-side', index === previousIndex || index === nextCardIndex);
+                    card.classList.toggle('is-side-next', index === nextCardIndex);
+                    card.classList.toggle('is-hidden', index !== activeIndex && index !== previousIndex && index !== nextCardIndex);
+                });
+
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('w-6', index === activeIndex);
+                    dot.classList.toggle('w-2', index !== activeIndex);
+                    dot.classList.toggle('bg-[#8a155b]', index === activeIndex);
+                    dot.classList.toggle('bg-[#d8b879]', index !== activeIndex);
+                });
+            };
+
+            const startTimer = () => {
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    return;
+                }
+
+                timer = window.setInterval(() => showTestimonial(activeIndex + 1), 3000);
+            };
+
+            const restartTimer = () => {
+                window.clearInterval(timer);
+                startTimer();
+            };
+
+            previousButtons.forEach((button) => button.addEventListener('click', () => {
+                showTestimonial(activeIndex - 1);
+                restartTimer();
+            }));
+            nextButtons.forEach((button) => button.addEventListener('click', () => {
+                showTestimonial(activeIndex + 1);
+                restartTimer();
+            }));
+            dots.forEach((dot, index) => dot.addEventListener('click', () => {
+                showTestimonial(index);
+                restartTimer();
+            }));
+            carousel.addEventListener('mouseenter', () => window.clearInterval(timer));
+            carousel.addEventListener('mouseleave', restartTimer);
+            carousel.addEventListener('focusin', () => window.clearInterval(timer));
+            carousel.addEventListener('focusout', restartTimer);
+            showTestimonial(0);
+            startTimer();
+        })();
+    </script>
     @endif
 
     @if ($homeSections['trust'])

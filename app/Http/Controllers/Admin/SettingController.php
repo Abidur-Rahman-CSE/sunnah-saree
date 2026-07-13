@@ -30,6 +30,7 @@ class SettingController extends Controller
             'home_section_collections_enabled',
             'home_section_essentials_enabled',
             'home_section_promo_banners_enabled',
+            'home_section_testimonials_enabled',
             'home_section_trust_enabled',
         ];
 
