@@ -146,6 +146,36 @@ test('checkout does not show delivery charge before area selection', function ()
         ->assertSee('data-delivery-charge>৳0', false);
 });
 
+test('contact page shows configured phone and whatsapp numbers', function () {
+    $this->seed();
+
+    $this->get(route('pages.show', 'contact-us'))
+        ->assertOk()
+        ->assertSee('01985902350')
+        ->assertSee('WhatsApp')
+        ->assertSee('https://wa.me/8801985902350', false);
+});
+
+test('footer links to customer policy pages and pages show saved policy text', function () {
+    $this->seed();
+
+    Setting::query()->updateOrCreate(
+        ['key' => 'return_policy_text'],
+        ['value' => 'Return within 3 days after receiving the parcel.'],
+    );
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee(route('pages.show', 'return-policy'), false)
+        ->assertSee(route('pages.show', 'shipping-policy'), false)
+        ->assertSee(route('pages.show', 'terms-conditions'), false)
+        ->assertSee(route('pages.show', 'privacy-policy'), false);
+
+    $this->get(route('pages.show', 'return-policy'))
+        ->assertOk()
+        ->assertSee('Return within 3 days after receiving the parcel.');
+});
+
 test('home essentials hide inactive categories', function () {
     $this->seed();
 

@@ -190,7 +190,8 @@ class DatabaseSeeder extends Seeder
 
         collect([
             'website_name' => 'Sunnah Sharee Ghar',
-            'phone' => '+8801700000000',
+            'phone' => '01985902350',
+            'whatsapp' => '01985902350',
             'email' => 'care@sunnahshareeghar.com',
             'address' => 'Dhaka, Bangladesh',
             'delivery_charge' => '80',

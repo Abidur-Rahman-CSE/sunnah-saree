@@ -74,6 +74,13 @@
         $activeMainMenuClass = 'bg-white text-[#8a155b] shadow-sm ring-1 ring-[#ead8ba]';
         $dropdownPanelClass = 'invisible absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 translate-y-2 rounded-lg border border-[#ead8ba] bg-white p-2 text-sm normal-case tracking-normal text-[#4f3d35] opacity-0 shadow-xl shadow-[#7a1f55]/10 transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100';
         $dropdownLinkClass = 'block rounded-lg px-3 py-2.5 transition hover:bg-[#fff6e8] hover:text-[#8a155b]';
+        $storePhone = \App\Models\Setting::valueFor('phone', '01985902350');
+        $storeWhatsapp = \App\Models\Setting::valueFor('whatsapp', $storePhone);
+        $storeWhatsappDigits = preg_replace('/\D+/', '', (string) $storeWhatsapp);
+
+        if (str_starts_with($storeWhatsappDigits, '0')) {
+            $storeWhatsappDigits = '88'.$storeWhatsappDigits;
+        }
     @endphp
 
     @if ($announcementBarItems->isNotEmpty())
@@ -212,6 +219,16 @@
             <div>
                 <img src="{{ asset('images/Logo/sunnah_logo_bgr.png') }}" alt="Sunnah Sharee Ghar" class="h-16 w-auto object-contain">
                 <p class="mt-3 text-sm text-[#6f5a50]">Premium sharee, modest gifts, ornaments, oils, cosmetics, and baby essentials for graceful homes.</p>
+                <div class="mt-4 grid gap-2 text-sm font-semibold text-[#4f3d35]">
+                    <a class="inline-flex items-center gap-2 transition hover:text-[#8a155b]" href="tel:{{ $storePhone }}">
+                        <x-storefront.icon name="phone" class="h-4 w-4 text-[#8a155b]" />
+                        {{ $storePhone }}
+                    </a>
+                    <a class="inline-flex items-center gap-2 transition hover:text-[#8a155b]" href="https://wa.me/{{ $storeWhatsappDigits }}" target="_blank" rel="noopener">
+                        <x-storefront.icon name="message-circle" class="h-4 w-4 text-[#8a155b]" />
+                        WhatsApp {{ $storeWhatsapp }}
+                    </a>
+                </div>
             </div>
             <div>
                 <h3 class="font-semibold">Quick Links</h3>
@@ -219,6 +236,8 @@
                     <a href="{{ route('products.index') }}">Shop</a>
                     <a href="{{ route('offers.index') }}">Offer Zone</a>
                     <a href="{{ route('combos.index') }}">Combo Deals</a>
+                    <a href="{{ route('pages.show', 'about-us') }}">About Us</a>
+                    <a href="{{ route('pages.show', 'contact-us') }}">Contact Us</a>
                 </div>
             </div>
             <div>
@@ -226,8 +245,8 @@
                 <div class="mt-3 grid gap-2 text-sm text-[#6f5a50]">
                     <a href="{{ route('pages.show', 'return-policy') }}">Return Policy</a>
                     <a href="{{ route('pages.show', 'shipping-policy') }}">Shipping Policy</a>
+                    <a href="{{ route('pages.show', 'terms-conditions') }}">Terms and Conditions</a>
                     <a href="{{ route('pages.show', 'privacy-policy') }}">Privacy Policy</a>
-                    <a href="{{ route('pages.show', 'terms-conditions') }}">Terms & Conditions</a>
                 </div>
             </div>
             <form class="space-y-3">

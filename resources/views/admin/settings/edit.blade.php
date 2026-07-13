@@ -6,6 +6,7 @@
         <div class="grid gap-4 md:grid-cols-2">
             <x-admin.field label="Website name"><input name="website_name" value="{{ old('website_name', $settings['website_name'] ?? 'Sunnah Sharee Ghar') }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Website name"></x-admin.field>
             <x-admin.field label="Phone"><input name="phone" value="{{ old('phone', $settings['phone'] ?? '') }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Phone"></x-admin.field>
+            <x-admin.field label="WhatsApp"><input name="whatsapp" value="{{ old('whatsapp', $settings['whatsapp'] ?? '') }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="WhatsApp"></x-admin.field>
             <x-admin.field label="Email"><input name="email" value="{{ old('email', $settings['email'] ?? '') }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Email"></x-admin.field>
             <x-admin.field label="Facebook page link"><input name="facebook_page_link" value="{{ old('facebook_page_link', $settings['facebook_page_link'] ?? '') }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Facebook page link"></x-admin.field>
             <x-admin.field label="Announcement bar text" span><input name="announcement_bar_text" value="{{ old('announcement_bar_text', $settings['announcement_bar_text'] ?? 'Free delivery over ৳5,000 • Cash on delivery available • Easy return support') }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Announcement bar text"></x-admin.field>
