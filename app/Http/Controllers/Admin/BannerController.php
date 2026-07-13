@@ -32,7 +32,10 @@ class BannerController extends Controller
      */
     public function create(): View
     {
-        return view('admin.banners.form', ['banner' => new Banner]);
+        return view('admin.banners.form', [
+            'banner' => new Banner,
+            'placements' => $this->availablePlacements(),
+        ]);
     }
 
     /**
@@ -58,7 +61,10 @@ class BannerController extends Controller
      */
     public function edit(Banner $banner): View
     {
-        return view('admin.banners.form', ['banner' => $banner]);
+        return view('admin.banners.form', [
+            'banner' => $banner,
+            'placements' => Banner::placements(),
+        ]);
     }
 
     /**
@@ -91,5 +97,20 @@ class BannerController extends Controller
             'image_url' => app(AdminImage::class)->store($request->file('image_file'), 'banners') ?? ($request->validated()['image_url'] ?? null),
             'is_active' => $request->boolean('is_active'),
         ];
+    }
+
+    /**
+     * @return array<string, array{label: string, description: string, multiple: bool}>
+     */
+    private function availablePlacements(): array
+    {
+        $usedSinglePlacements = Banner::query()
+            ->whereIn('placement', collect(Banner::placements())->where('multiple', false)->keys())
+            ->pluck('placement')
+            ->all();
+
+        return collect(Banner::placements())
+            ->reject(fn (array $placement, string $key): bool => ! $placement['multiple'] && in_array($key, $usedSinglePlacements, true))
+            ->all();
     }
 }

@@ -8,12 +8,12 @@
             <x-admin.field label="Campaign title"><input name="title" value="{{ old('title', $offer->title) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Campaign title"></x-admin.field>
             <x-admin.field label="Slug"><input name="slug" value="{{ old('slug', $offer->slug) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Slug"></x-admin.field>
             <x-admin.field label="Banner URL" span><input name="banner_url" value="{{ old('banner_url', $offer->banner_url) }}" class="rounded-lg border border-[#ddd4c4] px-4 py-3" placeholder="Banner URL"></x-admin.field>
-            <label class="rounded-lg border border-dashed border-[#cfc3ad] px-4 py-3 text-sm md:col-span-2">Upload offer banner<input type="file" name="banner_file" accept="image/*" data-image-preview="offer-preview" class="mt-2 block w-full"></label>
+            <label class="rounded-lg border border-dashed border-[#cfc3ad] px-4 py-3 text-sm md:col-span-2">Upload offer banner<input type="file" name="banner_file" accept="image/*" data-image-preview="offer-preview" data-image-preview-shape="wide" class="mt-2 block w-full"><x-admin.image-ratio-guide ratio="16:9" size="1920 x 1080 px" usage="Best for offer covers, campaign cards, and wide promos." shape="wide" /></label>
             <div class="grid gap-2 md:col-span-2">
                 <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#8a155b]">Banner preview</p>
                 <div id="offer-preview" class="grid grid-cols-4 gap-2 md:grid-cols-6">
                     @if ($offer->banner_url)
-                        <img src="{{ $offer->banner_url }}" alt="{{ $offer->title }}" class="aspect-square rounded-lg border border-[#eadcc3] object-cover">
+                        <img src="{{ $offer->banner_url }}" alt="{{ $offer->title }}" class="aspect-video rounded-lg border border-[#eadcc3] object-cover">
                     @endif
                 </div>
             </div>

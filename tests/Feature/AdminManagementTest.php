@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Collection;
 use App\Models\DeliveryChargeRule;
@@ -7,6 +8,7 @@ use App\Models\FashionAttribute;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -66,18 +68,82 @@ test('admin can open remaining management modules', function () {
         'is_active' => '1',
     ])->assertRedirect(route('admin.coupons.index'));
 
-    $this->post(route('admin.banners.store'), [
-        'title' => 'Promo Banner',
-        'placement' => 'promotional',
-        'headline' => 'Fresh picks',
-        'is_active' => '1',
-    ])->assertRedirect(route('admin.banners.index'));
-
     $this->assertDatabaseHas('collections', ['slug' => 'test-collection']);
     $this->assertDatabaseHas('offers', ['slug' => 'test-offer']);
     $this->assertDatabaseHas('combos', ['slug' => 'test-combo']);
     $this->assertDatabaseHas('coupons', ['code' => 'SAVE10']);
-    $this->assertDatabaseHas('banners', ['title' => 'Promo Banner']);
+});
+
+test('banner placement uses available dropdown and locks after creation', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+    $heroBanner = Banner::query()->where('placement', 'hero')->firstOrFail();
+
+    $this->actingAs($admin)
+        ->get(route('admin.banners.create'))
+        ->assertOk()
+        ->assertSee('<option value="hero"', false)
+        ->assertSee('Multiple banners can use this placement');
+
+    $this->actingAs($admin)
+        ->post(route('admin.banners.store'), [
+            'title' => 'Second Hero Banner',
+            'placement' => 'hero',
+            'headline' => 'Second hero headline',
+            'image_url' => 'https://example.com/second-hero.jpg',
+            'is_active' => '1',
+        ])
+        ->assertRedirect(route('admin.banners.index'));
+
+    $this->actingAs($admin)
+        ->get(route('admin.banners.edit', $heroBanner))
+        ->assertOk()
+        ->assertSee('Homepage hero banner')
+        ->assertSee('Placement is locked after creation')
+        ->assertSee('This placement supports multiple banners')
+        ->assertSee('name="placement" value="hero"', false)
+        ->assertSee('disabled class=', false);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('Second hero headline')
+        ->assertSee('data-hero-next', false)
+        ->assertSee('data-hero-dot', false);
+});
+
+test('admin can manage announcement bar without default delivery charge field', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+
+    $this->actingAs($admin)
+        ->get(route('admin.settings.edit'))
+        ->assertOk()
+        ->assertSee('Announcement bar text')
+        ->assertDontSee('Default delivery charge');
+
+    $this->actingAs($admin)
+        ->put(route('admin.settings.update'), [
+            'website_name' => 'Sunnah Sharee Ghar',
+            'phone' => '+8801700000000',
+            'email' => 'care@sunnahshareeghar.com',
+            'facebook_page_link' => 'https://facebook.com/sunnahshareeghar',
+            'announcement_bar_text' => 'Fast delivery in Dhaka • Cash on delivery • Easy exchange support',
+            'free_delivery_minimum_amount' => '5000',
+            'cod_enabled' => '1',
+            'online_payment_enabled' => '1',
+            'address' => 'Dhaka, Bangladesh',
+        ])
+        ->assertRedirect(route('admin.settings.edit'));
+
+    expect(Setting::valueFor('announcement_bar_text'))->toBe('Fast delivery in Dhaka • Cash on delivery • Easy exchange support');
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('Fast delivery in Dhaka')
+        ->assertSee('Cash on delivery')
+        ->assertSee('Easy exchange support');
 });
 
 test('admin can upload category image and print invoice', function () {

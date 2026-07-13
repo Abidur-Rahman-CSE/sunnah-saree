@@ -26,13 +26,15 @@
                     <x-admin.field label="Primary image URL"><input name="image_url" value="{{ old('image_url', $product->images->first()?->image_url) }}" class="rounded-lg border border-[#ddd4c4] bg-white px-4 py-3" placeholder="Primary image URL"></x-admin.field>
                     <label class="rounded-lg border border-dashed border-[#cfc3ad] bg-white px-4 py-3 text-sm">
                         Upload primary image
-                        <input type="file" name="image_file" accept="image/*" data-image-preview="primary-preview" class="mt-2 block w-full">
+                        <input type="file" name="image_file" accept="image/*" data-image-preview="primary-preview" data-image-preview-shape="portrait" class="mt-2 block w-full">
+                        <x-admin.image-ratio-guide ratio="4:5" size="1200 x 1500 px" usage="Product card and product details image crop." shape="portrait" />
                     </label>
                 </div>
                 <label class="rounded-lg border border-dashed border-[#cfc3ad] bg-white px-4 py-3 text-sm">
                     Upload gallery images
-                    <input type="file" name="image_files[]" accept="image/*" multiple data-image-preview="gallery-preview" class="mt-2 block w-full">
+                    <input type="file" name="image_files[]" accept="image/*" multiple data-image-preview="gallery-preview" data-image-preview-shape="portrait" class="mt-2 block w-full">
                     <span class="mt-1 block text-xs text-[#8d786d]">You can select multiple product images.</span>
+                    <x-admin.image-ratio-guide ratio="4:5" size="1200 x 1500 px" usage="Keep all gallery photos in the same portrait ratio." shape="portrait" />
                 </label>
                 <div class="grid gap-3 md:grid-cols-2">
                     <div>
@@ -50,7 +52,7 @@
                         <div class="mt-2 grid grid-cols-4 gap-2 md:grid-cols-8">
                             @foreach ($product->images as $image)
                                 <div class="overflow-hidden rounded-lg border border-[#eadcc3] bg-white">
-                                    <img src="{{ $image->image_url }}" alt="{{ $image->alt_text ?: $product->name }}" class="aspect-square w-full object-cover">
+                                    <img src="{{ $image->image_url }}" alt="{{ $image->alt_text ?: $product->name }}" class="aspect-[4/5] w-full object-cover">
                                     <button type="submit" form="delete-product-image-{{ $image->id }}" class="w-full bg-red-50 px-2 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100">
                                         Delete
                                     </button>
