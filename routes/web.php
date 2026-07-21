@@ -47,6 +47,7 @@ Route::get('/checkout/success/{order:order_number}', [CheckoutController::class,
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [CustomerAuthController::class, 'showLogin'])->name('login');
+    Route::get('/login/phone-check', [CustomerAuthController::class, 'phoneCheck'])->name('login.phone-check');
     Route::post('/login', [CustomerAuthController::class, 'login'])->name('login.store');
     Route::get('/register', [CustomerAuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [CustomerAuthController::class, 'register'])->name('register.store');

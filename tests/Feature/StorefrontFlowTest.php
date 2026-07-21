@@ -276,6 +276,46 @@ test('new customer account claims guest orders with matching phone number', func
         ->assertSee('Logout');
 });
 
+test('smart auth creates account from phone without email and logs in existing phone', function () {
+    $this->seed();
+
+    $this->get(route('login'))
+        ->assertOk()
+        ->assertSee('Phone number')
+        ->assertSee('data-auth-phone', false);
+
+    $this->getJson(route('login.phone-check', ['phone' => '01912345678']))
+        ->assertOk()
+        ->assertJson(['exists' => false]);
+
+    $this->post(route('login.store'), [
+        'phone' => '01912345678',
+        'name' => 'Phone Customer',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertRedirect(route('account.dashboard'));
+
+    $user = User::query()->where('phone', '01912345678')->firstOrFail();
+
+    expect($user->email)->toBeNull();
+
+    auth()->logout();
+
+    $this->getJson(route('login.phone-check', ['phone' => '+8801912345678']))
+        ->assertOk()
+        ->assertJson([
+            'exists' => true,
+            'name' => 'Phone Customer',
+        ]);
+
+    $this->post(route('login.store'), [
+        'phone' => '+8801912345678',
+        'password' => 'password123',
+    ])->assertRedirect(route('account.dashboard'));
+
+    $this->assertAuthenticatedAs($user);
+});
+
 test('navbar cart count uses the current logged in session cart after reload', function () {
     $this->seed();
 
