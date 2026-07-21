@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -54,6 +55,8 @@ class CustomerAuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
+        $this->attachGuestOrdersByPhone($user);
+
         Auth::login($user);
         $request->session()->regenerate();
 
@@ -67,5 +70,37 @@ class CustomerAuthController extends Controller
         $request->session()->regenerateToken();
 
         return to_route('home');
+    }
+
+    private function attachGuestOrdersByPhone(User $user): void
+    {
+        if (! $user->phone) {
+            return;
+        }
+
+        $phoneDigits = preg_replace('/\D+/', '', $user->phone);
+
+        if (! $phoneDigits) {
+            return;
+        }
+
+        $phoneVariants = [$user->phone, $phoneDigits];
+
+        if (str_starts_with($phoneDigits, '880')) {
+            $phoneVariants[] = '+'.$phoneDigits;
+            $phoneVariants[] = '0'.substr($phoneDigits, 3);
+        }
+
+        if (str_starts_with($phoneDigits, '0')) {
+            $phoneVariants[] = '88'.$phoneDigits;
+            $phoneVariants[] = '+88'.$phoneDigits;
+        }
+
+        $phoneVariants = array_values(array_unique(array_filter($phoneVariants)));
+
+        Order::query()
+            ->whereNull('user_id')
+            ->whereIn('customer_phone', $phoneVariants)
+            ->update(['user_id' => $user->id]);
     }
 }

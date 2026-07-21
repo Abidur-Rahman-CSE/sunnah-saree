@@ -6,6 +6,10 @@
         <div class="mt-6 flex flex-wrap gap-3">
             <a href="{{ route('account.orders.index') }}" class="rounded-lg border border-[#7a1f55] px-4 py-2 text-sm font-semibold text-[#7a1f55]">Order History</a>
             <a href="{{ route('account.wishlist.index') }}" class="rounded-lg bg-[#7a1f55] px-4 py-2 text-sm font-semibold text-white">Wishlist</a>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700">Logout</button>
+            </form>
         </div>
         <div class="mt-8 rounded-lg border border-[#eadcc3] bg-white p-6 shadow-sm">
             <h2 class="font-serif text-2xl font-bold">Recent Orders</h2>

@@ -2,7 +2,13 @@
 
 @section('content')
     <section class="mx-auto max-w-7xl px-4 py-8">
-        <x-section-title title="Wishlist" subtitle="Saved products for later purchase." />
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <x-section-title title="Wishlist" subtitle="Saved products for later purchase." />
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700">Logout</button>
+            </form>
+        </div>
         <div class="mt-8 grid gap-5 md:grid-cols-4">
             @forelse ($wishlistItems as $item)
                 <div class="relative">

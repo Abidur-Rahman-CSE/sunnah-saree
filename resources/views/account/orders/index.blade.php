@@ -2,7 +2,13 @@
 
 @section('content')
     <section class="mx-auto max-w-7xl px-4 py-8">
-        <x-section-title title="Order History" />
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <x-section-title title="Order History" />
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700">Logout</button>
+            </form>
+        </div>
         <div class="mt-8 rounded-lg border border-[#eadcc3] bg-white p-6 shadow-sm">
             <table class="w-full text-left text-sm">
                 <thead><tr class="border-b"><th class="py-3">Order</th><th>Status</th><th>Payment</th><th>Total</th><th></th></tr></thead>

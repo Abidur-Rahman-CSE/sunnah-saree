@@ -3,6 +3,7 @@
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\DeliveryChargeRule;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\User;
@@ -228,6 +229,51 @@ test('add to cart can update the navbar count without leaving the page', functio
         'product_id' => $product->id,
         'quantity' => 2,
     ]);
+});
+
+test('new customer account claims guest orders with matching phone number', function () {
+    $this->seed();
+
+    $product = Product::query()->with('variants')->firstOrFail();
+
+    $this->post(route('cart.store', $product), [
+        'product_variant_id' => $product->variants->first()->id,
+        'quantity' => 1,
+    ]);
+
+    $this->post(route('checkout.store'), [
+        'customer_name' => 'Guest Buyer',
+        'customer_email' => 'guest-buyer@example.com',
+        'customer_phone' => '+8801985902350',
+        'shipping_division' => 'Dhaka',
+        'shipping_district' => 'Dhaka',
+        'shipping_area' => 'Mirpur',
+        'shipping_address' => 'Mirpur, Dhaka',
+        'payment_method' => 'cod',
+    ])->assertRedirect();
+
+    $order = Order::query()->where('customer_phone', '+8801985902350')->firstOrFail();
+
+    expect($order->user_id)->toBeNull();
+
+    $this->post(route('register.store'), [
+        'name' => 'Guest Buyer',
+        'phone' => '01985902350',
+        'email' => 'claimed-buyer@example.com',
+        'address' => 'Mirpur, Dhaka',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])->assertRedirect(route('account.dashboard'));
+
+    $user = User::query()->where('email', 'claimed-buyer@example.com')->firstOrFail();
+
+    expect($order->refresh()->user_id)->toBe($user->id);
+
+    $this->actingAs($user)
+        ->get(route('account.dashboard'))
+        ->assertOk()
+        ->assertSee($order->order_number)
+        ->assertSee('Logout');
 });
 
 test('navbar cart count uses the current logged in session cart after reload', function () {
