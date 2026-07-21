@@ -332,7 +332,7 @@
         </div>
         <div class="relative mt-6">
             <button type="button" class="absolute left-0 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-[#d8b879] bg-white/95 text-2xl font-bold text-[#8a155b] shadow-lg transition hover:bg-[#8a155b] hover:text-white md:grid" data-testimonial-prev aria-label="Previous testimonial">‹</button>
-            <div class="flex items-center justify-center gap-4 overflow-hidden py-4">
+            <div class="flex h-[29rem] items-center justify-center gap-4 overflow-hidden py-4 sm:h-[31rem]">
                 @foreach ($testimonials as $testimonial)
                     @php
                         $initialState = $loop->first ? 'is-active' : ($loop->iteration <= 3 ? 'is-side' : 'is-hidden');
@@ -435,7 +435,7 @@
                     return;
                 }
 
-                timer = window.setInterval(() => showTestimonial(activeIndex + 1), 3000);
+                timer = window.setInterval(() => showTestimonial(activeIndex + 1), 4500);
             };
 
             const restartTimer = () => {
