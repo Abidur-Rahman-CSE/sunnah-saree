@@ -66,7 +66,7 @@
             ->get()
             ->reject(fn ($category) => $category->slug === 'sharee' || strtolower($category->name) === 'sharee');
         $isShareeMenuActive = request()->routeIs('products.index') && (request('category') === 'sharee' || request()->filled('sharee_type'));
-        $isCategoriesMenuActive = request()->routeIs('categories.show') || (request()->routeIs('products.index') && request()->filled('category') && request('category') !== 'sharee');
+        $activeCategory = request()->routeIs('categories.show') ? request()->route('category') : null;
         $isAllProductsActive = request()->routeIs('products.index') && ! request()->filled('category') && ! request()->filled('sharee_type') && request('sort') !== 'latest';
         $isNewArrivalsActive = request()->routeIs('products.index') && request('sort') === 'latest';
         $announcementBarText = \App\Models\Setting::valueFor('announcement_bar_text', 'Free delivery over ৳5,000 • Cash on delivery available • Easy return support');
@@ -133,7 +133,7 @@
                 </a>
             </nav>
         </div>
-        <nav class="mx-auto hidden max-w-7xl items-center justify-center gap-3 px-4 pb-4 text-xs font-semibold uppercase tracking-wide text-[#5a463c] lg:flex xl:gap-5">
+        <nav class="mx-auto hidden max-w-7xl flex-wrap items-center justify-center gap-2 px-4 pb-4 text-xs font-semibold uppercase tracking-wide text-[#5a463c] lg:flex xl:gap-3">
             <a class="{{ $mainMenuClass }} {{ $isAllProductsActive ? $activeMainMenuClass : '' }}" href="{{ route('products.index') }}">All Products</a>
             <div class="group relative">
                 <a class="{{ $mainMenuClass }} {{ $isShareeMenuActive ? $activeMainMenuClass : '' }} inline-flex items-center gap-1.5" href="{{ route('products.index', ['category' => 'sharee']) }}">
@@ -145,21 +145,26 @@
                     @endforeach
                 </div>
             </div>
-            <div class="group relative">
-                <a class="{{ $mainMenuClass }} {{ $isCategoriesMenuActive ? $activeMainMenuClass : '' }} inline-flex items-center gap-1.5" href="{{ route('products.index') }}">
-                    Categories <span class="text-[10px]">▾</span>
-                </a>
-                <div class="{{ $dropdownPanelClass }}">
-                    @forelse ($navCategories as $category)
-                        <a class="{{ $dropdownLinkClass }} font-semibold {{ request()->routeIs('categories.show') && request()->route('category')?->is($category) ? 'bg-[#fff6e8] text-[#8a155b]' : '' }}" href="{{ route('categories.show', $category) }}">{{ $category->name }}</a>
-                        @foreach ($category->children as $childCategory)
-                            <a class="{{ $dropdownLinkClass }} px-6 text-[#7a6a60] {{ request()->routeIs('categories.show') && request()->route('category')?->is($childCategory) ? 'bg-[#fff6e8] text-[#8a155b]' : '' }}" href="{{ route('categories.show', $childCategory) }}">{{ $childCategory->name }}</a>
-                        @endforeach
-                    @empty
-                        <span class="block rounded-lg px-3 py-2 text-[#8d786d]">No categories available</span>
-                    @endforelse
-                </div>
-            </div>
+            @foreach ($navCategories as $category)
+                @php
+                    $isCategoryMenuActive = $activeCategory?->is($category) || $category->children->contains(fn ($childCategory) => $activeCategory?->is($childCategory));
+                @endphp
+                @if ($category->children->isNotEmpty())
+                    <div class="group relative">
+                        <a class="{{ $mainMenuClass }} {{ $isCategoryMenuActive ? $activeMainMenuClass : '' }} inline-flex items-center gap-1.5" href="{{ route('categories.show', $category) }}">
+                            {{ $category->name }} <span class="text-[10px]">▾</span>
+                        </a>
+                        <div class="{{ $dropdownPanelClass }}">
+                            <a class="{{ $dropdownLinkClass }} font-semibold {{ $activeCategory?->is($category) ? 'bg-[#fff6e8] text-[#8a155b]' : '' }}" href="{{ route('categories.show', $category) }}">All {{ $category->name }}</a>
+                            @foreach ($category->children as $childCategory)
+                                <a class="{{ $dropdownLinkClass }} px-6 text-[#7a6a60] {{ $activeCategory?->is($childCategory) ? 'bg-[#fff6e8] text-[#8a155b]' : '' }}" href="{{ route('categories.show', $childCategory) }}">{{ $childCategory->name }}</a>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <a class="{{ $mainMenuClass }} {{ $isCategoryMenuActive ? $activeMainMenuClass : '' }}" href="{{ route('categories.show', $category) }}">{{ $category->name }}</a>
+                @endif
+            @endforeach
             <a class="{{ $mainMenuClass }} {{ $isNewArrivalsActive ? $activeMainMenuClass : '' }}" href="{{ route('products.index', ['sort' => 'latest']) }}">New Arrivals</a>
             <a class="{{ $mainMenuClass }} {{ request()->routeIs('offers.*') ? $activeMainMenuClass : '' }}" href="{{ route('offers.index') }}">Offers</a>
             <a class="{{ $mainMenuClass }} {{ request()->routeIs('combos.index') ? $activeMainMenuClass : '' }}" href="{{ route('combos.index') }}">Combos</a>
@@ -193,19 +198,14 @@
                         @endforeach
                     </div>
                 </details>
-                <details class="rounded-lg px-3 py-2 {{ $isCategoriesMenuActive ? 'bg-[#8a155b] text-white' : 'bg-[#fff6e8]' }}" @if($isCategoriesMenuActive) open @endif>
-                    <summary class="cursor-pointer list-none text-center">Categories ▾</summary>
-                    <div class="mt-2 grid gap-2 normal-case tracking-normal">
-                        @forelse ($navCategories as $category)
-                            <a href="{{ route('categories.show', $category) }}" class="rounded-lg bg-white px-3 py-2 text-center font-semibold text-[#5a463c]">{{ $category->name }}</a>
-                            @foreach ($category->children as $childCategory)
-                                <a href="{{ route('categories.show', $childCategory) }}" class="rounded-lg bg-white px-3 py-2 text-center text-[#7a6a60]">{{ $childCategory->name }}</a>
-                            @endforeach
-                        @empty
-                            <span class="rounded-lg bg-white px-3 py-2 text-center text-[#8d786d]">No categories available</span>
-                        @endforelse
-                    </div>
-                </details>
+                <div class="grid grid-cols-2 gap-2">
+                    @foreach ($navCategories as $category)
+                        @php
+                            $isCategoryMenuActive = $activeCategory?->is($category) || $category->children->contains(fn ($childCategory) => $activeCategory?->is($childCategory));
+                        @endphp
+                        <a href="{{ route('categories.show', $category) }}" class="rounded-lg px-3 py-2 text-center {{ $isCategoryMenuActive ? 'bg-[#8a155b] text-white' : 'bg-[#fff6e8]' }}">{{ $category->name }}</a>
+                    @endforeach
+                </div>
             </div>
         </div>
     </header>
