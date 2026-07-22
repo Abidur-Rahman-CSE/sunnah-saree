@@ -316,6 +316,54 @@ test('smart auth creates account from phone without email and logs in existing p
     $this->assertAuthenticatedAs($user);
 });
 
+test('admin can login with email or phone from dedicated admin form', function () {
+    $this->seed();
+
+    $admin = User::query()->where('role', 'admin')->firstOrFail();
+
+    $this->get(route('admin.login'))
+        ->assertOk()
+        ->assertSee('Admin login')
+        ->assertSee('Email or phone');
+
+    $this->post(route('admin.login.store'), [
+        'identifier' => $admin->email,
+        'password' => 'password',
+    ])->assertRedirect(route('admin.dashboard'));
+
+    $this->assertAuthenticatedAs($admin);
+
+    auth()->logout();
+
+    $this->post(route('admin.login.store'), [
+        'identifier' => '01700000000',
+        'password' => 'password',
+    ])->assertRedirect(route('admin.dashboard'));
+
+    $this->assertAuthenticatedAs($admin);
+});
+
+test('guest admin routes redirect to admin login form', function () {
+    $this->get(route('admin.dashboard'))
+        ->assertRedirect(route('admin.login'));
+
+    $this->get(route('admin.products.index'))
+        ->assertRedirect(route('admin.login'));
+});
+
+test('admin login rejects customer accounts', function () {
+    $this->seed();
+
+    $customer = User::query()->where('role', 'customer')->firstOrFail();
+
+    $this->post(route('admin.login.store'), [
+        'identifier' => $customer->email,
+        'password' => 'password',
+    ])->assertSessionHasErrors('identifier');
+
+    $this->assertGuest();
+});
+
 test('navbar cart count uses the current logged in session cart after reload', function () {
     $this->seed();
 

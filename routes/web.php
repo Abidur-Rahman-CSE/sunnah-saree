@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\Auth\CustomerAuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
@@ -47,6 +48,8 @@ Route::get('/checkout/success/{order:order_number}', [CheckoutController::class,
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [CustomerAuthController::class, 'showLogin'])->name('login');
+    Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
+    Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.store');
     Route::get('/login/phone-check', [CustomerAuthController::class, 'phoneCheck'])->name('login.phone-check');
     Route::post('/login', [CustomerAuthController::class, 'login'])->name('login.store');
     Route::get('/register', [CustomerAuthController::class, 'showRegister'])->name('register');
